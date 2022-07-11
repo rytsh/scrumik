@@ -1,0 +1,22 @@
+/* stylelint-disable no-invalid-position-at-import-rule */
+// tailwindcss
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import 'https://fonts.googleapis.com/css2?family=Noto+Emoji&display=swap';
+
+html,
+body {
+  @apply h-full w-full;
+}
+
+::selection {
+  @apply bg-orange-500 text-white;
+}
+
+.font-emoji {
+  font-family: 'Noto Emoji', sans-serif;
+}
+
+@import 'style';

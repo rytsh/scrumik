@@ -1,0 +1,4 @@
+/* stylelint-disable max-line-length */
+.form-input {
+  @apply border-2 border-gray-200 bg-gray-100 py-1 px-2 appearance-none w-full rounded leading-tight focus:outline-none focus:bg-white focus:border-orange-500;
+}
