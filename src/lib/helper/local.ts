@@ -1,6 +1,7 @@
 import { roomList } from "../store/store";
 
 const roomKey = "room";
+const nameKey = "name";
 
 const recordRoomLocalStorage = (key: string, value: any) => {
   let rooms = getRoomsLocalStorage();
@@ -39,4 +40,14 @@ const removeAllRoomsLocalStorage = () => {
   roomList.set(null);
 };
 
-export { roomKey, recordRoomLocalStorage, getRoomsLocalStorage, removeRoomLocalStorage, removeAllRoomsLocalStorage };
+const getName = () => {
+  const value = localStorage.getItem(nameKey);
+  return value;
+};
+
+const setName = (v: string) => {
+  localStorage.setItem(nameKey, v);
+  return v;
+};
+
+export { getName, setName, recordRoomLocalStorage, getRoomsLocalStorage, removeRoomLocalStorage, removeAllRoomsLocalStorage };

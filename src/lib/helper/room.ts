@@ -1,10 +1,8 @@
-import { addDoc, collection, doc, Firestore, onSnapshot } from "firebase/firestore";
+import { addDoc, collection, doc, DocumentSnapshot, Firestore, onSnapshot, type DocumentData } from "firebase/firestore";
 import type { RoomSpec } from "./models";
 
-const subscribe = (db: Firestore) => {
-  const unsub = onSnapshot(doc(db, "cities", "SF"), (doc) => {
-    console.log("Current data: ", doc.data());
-  });
+const subscribe = (db: Firestore, roomID: string, fn: (doc: DocumentSnapshot<DocumentData>)=>void) => {
+  const unsub = onSnapshot(doc(db, "room", roomID), fn);
 
   return unsub;
 };

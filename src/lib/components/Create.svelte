@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { db } from "../helper/firebase";
+  import { db } from "../helper/fire";
   import { recordRoomLocalStorage } from "../helper/local";
   import type { RoomSpec } from "../helper/models";
   import { createRoom } from "../helper/room";
@@ -12,7 +12,9 @@
   const create = async () => {
     const formData = new FormData(form);
     const roomSpec: RoomSpec = {
-      name: formData.get("name") as string,
+      info: {
+        name: formData.get("name") as string,
+      },
       password: {
         passCode: formData.get("passCode") as string,
         leaderCode: formData.get("leaderCode") as string,

@@ -27,7 +27,7 @@
           >
             <a
               class="w-full leading-10 hover:bg-green-500 hover:text-white px-2"
-              href={`/room/${room.id}`}>{room.name}</a
+              href={`/room/${room.id}`}>{room.info.name}</a
             >
             <button
               class="border-l border-black bg-orange-500 hover:bg-red-500 text-white px-2"
