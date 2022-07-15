@@ -17,13 +17,15 @@
   };
 
   const deleteFn = () => {
-    dispatch("delete", { text });
+    dispatch("delete");
   };
 </script>
 
 <button
   on:click={clickFn}
-  class={`${className} h-40 w-24 bg-white hover:bg-nl border-2 border-black flex items-center justify-center appearance-none relative`}
+  class={`${className} h-40 w-24 bg-white ${
+    editMode ? "hover:bg-yellow-200" : "hover:bg-nl"
+  } border-2 border-black flex items-center justify-center appearance-none relative`}
 >
   <button
     on:click|stopPropagation={deleteFn}

@@ -44,7 +44,7 @@
     ];
 
     newCardScreen = false;
-    newCardValues = newCardValuesOrginal;
+    newCardValues = { ...newCardValuesOrginal };
   };
 
   // set cards
@@ -53,7 +53,7 @@
     setDoc(roomRef, { cards: modifiedCardDeck }, { merge: true });
 
     newCardScreen = false;
-    newCardValues = newCardValuesOrginal;
+    newCardValues = { ...newCardValuesOrginal };
 
     editMode = false;
   };
@@ -78,7 +78,7 @@
       on:click={() => {
         if (editMode) {
           newCardScreen = false;
-          newCardValues = newCardValuesOrginal;
+          newCardValues = { ...newCardValuesOrginal };
         } else {
           modifiedCardDeck = cardDeck.slice();
         }
@@ -135,7 +135,7 @@
               type="button"
               on:click={() => {
                 newCardScreen = false;
-                newCardValues = newCardValuesOrginal;
+                newCardValues = { ...newCardValuesOrginal };
               }}
               class="border border-black bg-white text-black hover:bg-red-500 hover:text-white font-bold py-1 px-3 rounded"
             >
@@ -148,17 +148,22 @@
 
     <div class="p-6 flex flex-wrap gap-2">
       {#if editMode}
-        {#each modifiedCardDeck as card}
-          <Card class="bg-white" text={card.text} emoji={card.emoji} />
+        {#each modifiedCardDeck as card, i}
+          <Card
+            class="bg-white"
+            text={card.text}
+            emoji={card.emoji}
+            on:delete={() => {
+              modifiedCardDeck = [
+                ...modifiedCardDeck.filter((_, j) => j !== i),
+              ];
+            }}
+            {editMode}
+          />
         {/each}
       {:else}
         {#each cardDeck as cardV}
-          <Card
-            on:click={selectCard}
-            text={cardV.text}
-            emoji={cardV.emoji}
-            {editMode}
-          />
+          <Card on:click={selectCard} text={cardV.text} emoji={cardV.emoji} />
         {/each}
       {/if}
       {#if editMode}

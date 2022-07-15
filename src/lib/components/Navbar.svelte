@@ -18,9 +18,9 @@
     <a
       href="https://github.com/rytsh/scrumik"
       target="_blank"
-      class="hover:text-nl border-l border-white pl-4"
+      class="hover:text-nl border-l border-white pl-4 pr-2"
     >
-      github ⇗
+      github
     </a>
   </div>
 </div>
