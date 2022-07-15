@@ -1,4 +1,4 @@
-import { addDoc, collection, doc, DocumentSnapshot, Firestore, onSnapshot, type DocumentData } from "firebase/firestore";
+import { addDoc, collection, doc, DocumentSnapshot, Firestore, getDoc, onSnapshot, type DocumentData } from "firebase/firestore";
 import type { RoomSpec } from "./models";
 
 const subscribe = (db: Firestore, roomID: string, fn: (doc: DocumentSnapshot<DocumentData>)=>void) => {
@@ -17,4 +17,23 @@ const createRoom = async (db: Firestore, roomSpec: RoomSpec) => {
   }
 };
 
-export { subscribe, createRoom };
+const isReachableRoom = async (db: Firestore, roomID: string, password: string) => {
+  const docRef = doc(db, "room", roomID);
+  const docSnap = await getDoc(docRef);
+
+  if (docSnap.exists()) {
+    const roomSpec = docSnap.data() as RoomSpec;
+
+    // public room is always reachable
+    if (roomSpec.password.passCode == "") {
+      return true;
+    }
+
+    return roomSpec.password.passCode === password || roomSpec.password.leaderCode === password;
+  } else {
+    // doc.data() will be undefined in this case
+    throw new Error("No such document!");
+  }
+};
+
+export { subscribe, createRoom, isReachableRoom };

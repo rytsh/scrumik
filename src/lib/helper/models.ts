@@ -1,6 +1,6 @@
 type People = {
   [name: string]: {
-    points: number;
+    card: CardV;
     isLeader: boolean;
   }
 };
@@ -8,6 +8,11 @@ type People = {
 type Info = {
   name: string;
   description?: string;
+}
+
+type CardV = {
+  text: string;
+  emoji: boolean;
 }
 
 type RoomSpec = {
@@ -18,7 +23,22 @@ type RoomSpec = {
     leaderCode: string;
   }
   people?: People;
+  cards: CardV[];
 };
 
-export { type RoomSpec, type People, type Info };
+const defaultCards: CardV[] = [
+  { text: "1", emoji: false },
+  { text: "2", emoji: false },
+  { text: "3", emoji: false },
+  { text: "5", emoji: false },
+  { text: "8", emoji: false },
+  { text: "13", emoji: false },
+  { text: "21", emoji: false },
+  { text: "34", emoji: false },
+  { text: "55", emoji: false },
+  { text: "☕", emoji: true },
+  { text: "🤯", emoji: true },
+  { text: "🔭", emoji: true },
+];
 
+export { type RoomSpec, type People, type Info, type CardV, defaultCards };

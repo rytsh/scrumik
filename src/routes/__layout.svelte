@@ -10,7 +10,7 @@
 
 <div class="bg-gray-100 h-full">
   <div class="container mx-auto border-black">
-    <Navbar class="px-4 border-orange-500 border-b-2 mb-3" />
+    <Navbar class="px-2 border-nl border-b-2 mb-3" />
 
     <slot />
   </div>

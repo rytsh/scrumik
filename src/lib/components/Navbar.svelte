@@ -6,11 +6,21 @@
 </script>
 
 <div class={`${className} bg-black text-white flex items-center`}>
-  <span class="text-xl font-bold mr-4">
+  <a href="/" class="appearance-none text-xl font-bold mr-4 hover:text-nl">
     {title}
-  </span>
+  </a>
 
   <span>
     {message}
   </span>
+
+  <div class="flex-grow text-right">
+    <a
+      href="https://github.com/rytsh/scrumik"
+      target="_blank"
+      class="hover:text-nl border-l border-white pl-4"
+    >
+      github ⇗
+    </a>
+  </div>
 </div>

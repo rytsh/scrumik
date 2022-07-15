@@ -1,20 +1,36 @@
 <script lang="ts">
   import { createEventDispatcher } from "svelte";
+  import type { CardV } from "../helper/models";
 
   export let text = "";
   export let emoji = false;
 
+  export let editMode = false;
+
+  let className = "";
+  export { className as class };
+
   const dispatch = createEventDispatcher();
 
   const clickFn = () => {
-    dispatch("click", { text });
+    dispatch("click", { text, emoji } as CardV);
+  };
+
+  const deleteFn = () => {
+    dispatch("delete", { text });
   };
 </script>
 
 <button
   on:click={clickFn}
-  class="h-40 w-24 bg-white hover:bg-orange-500 border-2 border-black flex items-center justify-center appearance-none"
+  class={`${className} h-40 w-24 bg-white hover:bg-nl border-2 border-black flex items-center justify-center appearance-none relative`}
 >
+  <button
+    on:click|stopPropagation={deleteFn}
+    class:hidden={!editMode}
+    class="h-6 w-6 bg-white hover:bg-red-500 border-l border-b border-black appearance-none absolute top-0 right-0"
+    >-</button
+  >
   <span class={`${emoji ? "font-emoji" : ""} text-5xl pointer-events-none`}
     >{text}</span
   >

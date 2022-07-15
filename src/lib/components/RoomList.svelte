@@ -1,6 +1,7 @@
 <script lang="ts">
   import { onDestroy, onMount } from "svelte";
   import { removeRoomLocalStorage } from "../helper/local";
+  import { confirm } from "../helper/ask";
   import { roomList, setRoomList } from "../store/store";
 
   let className = "";
@@ -30,9 +31,11 @@
               href={`/room/${room.id}`}>{room.info.name}</a
             >
             <button
-              class="border-l border-black bg-orange-500 hover:bg-red-500 text-white px-2"
+              class="border-l border-black bg-white hover:bg-red-500 hover:text-white px-2"
               on:click={() => {
-                removeRoomLocalStorage(room.id);
+                if (confirm(`Are you sure to delete? [${room.info.name}]`)) {
+                  removeRoomLocalStorage(room.id);
+                }
               }}>delete</button
             >
           </li>

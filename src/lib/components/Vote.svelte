@@ -18,21 +18,12 @@
     setDoc(roomRef, { info: { description: description } }, { merge: true });
     edit = false;
   };
-
-  const copyInviteLink = () => {
-    const passCode = "xytz";
-    // if (leader) {
-    //   passCode = "leader";
-    // }
-
-    navigator.clipboard.writeText(
-      `https://${window.location.host}/room/${id}?passcode=${passCode}`
-    );
-  };
 </script>
 
 <div class={`${className} relative`}>
-  <div class="border-b border-black text-xl flex flex-wrap justify-between">
+  <div
+    class="border-b border-black h-7 flex flex-wrap justify-between box-content"
+  >
     <span class="px-2">Voting - {edit ? "" : description}</span>
     {#if edit}
       <input
@@ -44,15 +35,15 @@
     <div>
       {#if edit}
         <button
-          class="px-2 appearance-none border-l border-black self-end hover:bg-green-500 hover:text-white"
+          class="px-2 h-7 appearance-none border-l border-black self-end hover:bg-green-500 hover:text-white"
           on:click={save}
         >
           Save
         </button>
       {/if}
       <button
-        class={`px-2 appearance-none border-l float-right border-black self-end ${
-          edit ? "hover:bg-red-500 hover:text-white" : "hover:bg-orange-500"
+        class={`float-right px-2 h-7 appearance-none border-l border-black self-end hover:text-white ${
+          edit ? "hover:bg-red-500" : "hover:bg-nl"
         }`}
         on:click={() => {
           edit = !edit;
@@ -66,24 +57,24 @@
     {#if people}
       <table class="w-full">
         {#each Object.entries(people) as [name, person]}
-          <tr>
-            <td class="text-left w-1/2">{name}</td>
-            <td class="text-center">{person.points}</td>
+          <tr
+            class={`border-b border-black first:border-t ${
+              person.card?.text
+                ? person.card?.text == "-"
+                  ? "bg-yellow-100"
+                  : ""
+                : "bg-yellow-100"
+            }`}
+          >
+            <td class="text-left w-1/2 text-2xl">{name}</td>
+            <td
+              class={`${
+                person.card?.emoji ? "font-emoji" : ""
+              } text-center text-5xl`}>{person.card?.text ?? "-"}</td
+            >
           </tr>
         {/each}
       </table>
     {/if}
-  </div>
-  <div class="absolute bottom-0 right-0">
-    <button
-      on:click={copyInviteLink}
-      class="float-right border-l border-t border-black hover:bg-orange-500 px-2"
-      >Invite Link</button
-    >
-    <button
-      on:click={copyInviteLink}
-      class="float-right border-l border-t border-black hover:bg-orange-500 px-2"
-      >Leader Link</button
-    >
   </div>
 </div>

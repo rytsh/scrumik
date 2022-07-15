@@ -16,7 +16,7 @@
   import { doc, setDoc, type Unsubscribe } from "firebase/firestore";
   import { onDestroy, onMount } from "svelte";
   import { db } from "@/lib/helper/fire";
-  import type { Info, People } from "@/lib/helper/models";
+  import type { CardV, Info, People } from "@/lib/helper/models";
   import { getName, setName } from "@/lib/helper/local";
   import { generateName } from "@/lib/helper/name";
 
@@ -26,6 +26,7 @@
 
   const myName = getName() ?? setName(generateName());
   let people: People = null;
+  let cards: CardV[] = [];
 
   const unsub: Unsubscribe = null;
   onMount(() => {
@@ -40,6 +41,8 @@
     subscribe(db, id, (data) => {
       info = data.get("info") as Info;
       people = data.get("people") as People;
+      const cardsTmp = data.get("cards") as CardV[];
+      cards = cardsTmp?.sort((a, b) => a.text.localeCompare(b.text)) ?? [];
       // console.log(data.data());
     });
   });
@@ -59,7 +62,17 @@
     class="flex-1 bg-white border-black border-2"
   />
   <div class="flex flex-1 flex-col gap-2">
-    <Settings {id} {info} {myName} class="bg-white border-black border-2" />
-    <Poker {id} {myName} class="flex-1 bg-white border-black border-2" />
+    <Settings
+      {id}
+      {info}
+      {myName}
+      class="bg-white border-black border-2 h-fit"
+    />
+    <Poker
+      {id}
+      {myName}
+      cardDeck={cards}
+      class="flex-1 bg-white border-black border-2 h-fit"
+    />
   </div>
 </div>

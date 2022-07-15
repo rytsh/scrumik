@@ -42,5 +42,6 @@ module.exports = {
     "max-len": "off",
     "@typescript-eslint/explicit-module-boundary-types": "off",
     "spaced-comment": ["error", "always", { "markers": ["/"] }],
+    "operator-linebreak": ["error", "before"],
   },
 };

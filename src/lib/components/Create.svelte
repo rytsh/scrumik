@@ -1,7 +1,7 @@
 <script lang="ts">
   import { db } from "../helper/fire";
   import { recordRoomLocalStorage } from "../helper/local";
-  import type { RoomSpec } from "../helper/models";
+  import { defaultCards, type RoomSpec } from "../helper/models";
   import { createRoom } from "../helper/room";
 
   let className = "";
@@ -19,6 +19,7 @@
         passCode: formData.get("passCode") as string,
         leaderCode: formData.get("leaderCode") as string,
       },
+      cards: defaultCards,
     };
 
     try {
@@ -69,7 +70,7 @@
     <button
       type="submit"
       value="create"
-      class="block border border-black bg-white text-black hover:bg-orange-500 hover:text-white font-bold py-1 px-3 rounded"
+      class="block border border-black bg-white text-black hover:bg-nl hover:text-white font-bold py-1 px-3 rounded"
     >
       Create Room
     </button>

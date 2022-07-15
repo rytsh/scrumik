@@ -4,8 +4,8 @@
   import RoomList from "@/lib/components/RoomList.svelte";
 </script>
 
-<div class="flex flex-grow gap-3">
-  <div class="flex flex-grow flex-col gap-3">
+<div class="flex flex-1 gap-3">
+  <div class="flex flex-1 flex-col gap-3">
     <Join class="flex-1 border border-black h-fit" />
     <RoomList class="flex-1 border border-black h-fit" />
   </div>

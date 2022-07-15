@@ -3,7 +3,11 @@ module.exports = {
   content: ["./src/app.html", "./src/**/*.{svelte,js,ts,jsx,tsx}"],
   darkMode: "class", // or 'media' or 'class'
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        'nl': '#ff5c00',
+      },
+    },
   },
   variants: {
     extend: {},

@@ -2,7 +2,9 @@
 
 __NOT READY YET!__
 
-Scrum poker application with firebase.
+Scrum poker application based firestore.
+
+Icons of poker cards [Noto Emoji](https://fonts.google.com/noto/specimen/Noto+Emoji)
 
 <details><summary>Development</summary>
 
