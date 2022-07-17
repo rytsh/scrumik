@@ -27,6 +27,8 @@
       roomSpec.id = id;
       // record id in local storage
       recordRoomLocalStorage(id, roomSpec);
+      // goes to room page
+      window.location.href = `/room/${id}?leader`;
     } catch (error) {
       console.error(error);
     }

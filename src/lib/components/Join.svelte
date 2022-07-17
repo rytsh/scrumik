@@ -1,5 +1,6 @@
 <script lang="ts">
   import { db } from "../helper/fire";
+  import { redirectToRoom } from "../helper/pass";
   import { isReachableRoom } from "../helper/room";
 
   let className = "";
@@ -21,9 +22,7 @@
         throw new Error("Passcode is not correct");
       }
 
-      window.location.href = `/room/${roomID}${
-        password != "" ? `?password=${password}` : ""
-      }`;
+      redirectToRoom(roomID, password);
     } catch (error) {
       warn = error.message;
     }

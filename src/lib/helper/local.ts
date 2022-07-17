@@ -1,4 +1,5 @@
 import { roomList } from "../store/store";
+import type { Password } from "./models";
 
 const roomKey = "room";
 const nameKey = "name";
@@ -22,6 +23,16 @@ const getRoomsLocalStorage = (): any[] | null => {
     return null;
   }
   return JSON.parse(value);
+};
+
+const getRoomPasswordLocalStorage = (id: string): Password | null => {
+  const rooms = getRoomsLocalStorage();
+  if (rooms == null) {
+    return;
+  }
+
+  const room = rooms.find((room) => room.id == id);
+  return room?.password;
 };
 
 const removeRoomLocalStorage = (key: string) => {
@@ -50,4 +61,4 @@ const setName = (v: string) => {
   return v;
 };
 
-export { getName, setName, recordRoomLocalStorage, getRoomsLocalStorage, removeRoomLocalStorage, removeAllRoomsLocalStorage };
+export { getName, setName, recordRoomLocalStorage, getRoomsLocalStorage, getRoomPasswordLocalStorage, removeRoomLocalStorage, removeAllRoomsLocalStorage };

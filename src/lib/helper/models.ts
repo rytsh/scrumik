@@ -15,13 +15,15 @@ type CardV = {
   emoji: boolean;
 }
 
+type Password = {
+  passCode: string;
+  leaderCode: string;
+}
+
 type RoomSpec = {
   id?: string;
   info: Info;
-  password: {
-    passCode: string;
-    leaderCode: string;
-  }
+  password: Password;
   people?: People;
   cards: CardV[];
 };
@@ -41,4 +43,4 @@ const defaultCards: CardV[] = [
   { text: "🔭", emoji: true },
 ];
 
-export { type RoomSpec, type People, type Info, type CardV, defaultCards };
+export { type RoomSpec, type People, type Info, type CardV, type Password, defaultCards };

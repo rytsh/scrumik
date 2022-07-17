@@ -4,13 +4,14 @@
 
   import Card from "./Card.svelte";
   import type { CardV } from "../helper/models";
+  import { stringSort } from "../helper/sort";
 
   export let cardDeck: CardV[] = [];
 
   let className = "";
   export { className as class };
   export let id = "";
-  export let myName = "";
+  export let nick = "";
 
   let editMode = false;
   let newCardScreen = false;
@@ -28,7 +29,7 @@
     const roomRef = doc(db, "room", id);
     setDoc(
       roomRef,
-      { people: { [myName]: { card: event.detail } } },
+      { people: { [nick]: { card: event.detail } } },
       { merge: true }
     );
   };
@@ -162,7 +163,7 @@
           />
         {/each}
       {:else}
-        {#each cardDeck as cardV}
+        {#each cardDeck.sort( (a, b) => stringSort(a.text, b.text) ) as cardV (cardV.text)}
           <Card on:click={selectCard} text={cardV.text} emoji={cardV.emoji} />
         {/each}
       {/if}

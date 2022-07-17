@@ -29,7 +29,7 @@ module.exports = {
     "svelte3/ignore-styles": () => true,
   },
   rules: {
-    "indent": ["error", 2, { "SwitchCase": 1 }],
+    "indent": "off",
     "new-cap": "off",
     "@typescript-eslint/no-explicit-any": "off",
     "object-curly-spacing": ["error", "always"],
@@ -42,6 +42,6 @@ module.exports = {
     "max-len": "off",
     "@typescript-eslint/explicit-module-boundary-types": "off",
     "spaced-comment": ["error", "always", { "markers": ["/"] }],
-    "operator-linebreak": ["error", "before"],
+    "operator-linebreak": "off",
   },
 };
