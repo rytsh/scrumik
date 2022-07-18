@@ -28,12 +28,12 @@
           >
             <a
               class="w-full leading-10 hover:bg-green-500 hover:text-white px-2"
-              href={`/room/${room.id}`}>{room.info.name}</a
+              href={`/room/${room.id}`}>{room.name}</a
             >
             <button
               class="border-l border-black bg-white hover:bg-red-500 hover:text-white px-2"
               on:click={() => {
-                if (confirm(`Are you sure to delete? [${room.info.name}]`)) {
+                if (confirm(`Are you sure to delete? [${room.name}]`)) {
                   removeRoomLocalStorage(room.id);
                 }
               }}>delete</button

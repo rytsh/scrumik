@@ -1,8 +1,9 @@
 import { roomList } from "../store/store";
-import type { Password } from "./models";
+import type { IDNick, Password } from "./models";
+import { v4 as uuidv4 } from "uuid";
 
 const roomKey = "room";
-const nameKey = "name";
+const nameIDKey = "id";
 
 const recordRoomLocalStorage = (key: string, value: any) => {
   let rooms = getRoomsLocalStorage();
@@ -51,14 +52,25 @@ const removeAllRoomsLocalStorage = () => {
   roomList.set(null);
 };
 
-const getName = () => {
-  const value = localStorage.getItem(nameKey);
-  return value;
+const getIDName = () => {
+  const value = localStorage.getItem(nameIDKey);
+  if (value == null) {
+    return null;
+  }
+
+  return JSON.parse(value) as IDNick;
 };
 
-const setName = (v: string) => {
-  localStorage.setItem(nameKey, v);
-  return v;
+const setIDName = (nick: string) => {
+  const id = uuidv4();
+  const v = { id: id, nick: nick } as IDNick;
+  localStorage.setItem(nameIDKey, JSON.stringify(v));
+  return { id, nick } as IDNick;
 };
 
-export { getName, setName, recordRoomLocalStorage, getRoomsLocalStorage, getRoomPasswordLocalStorage, removeRoomLocalStorage, removeAllRoomsLocalStorage };
+const changeIDName = (id: string, nick: string) => {
+  const v = { id: id, nick: nick } as IDNick;
+  localStorage.setItem(nameIDKey, JSON.stringify(v));
+};
+
+export { getIDName, setIDName, changeIDName, recordRoomLocalStorage, getRoomsLocalStorage, getRoomPasswordLocalStorage, removeRoomLocalStorage, removeAllRoomsLocalStorage };

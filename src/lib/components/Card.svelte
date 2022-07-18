@@ -23,7 +23,7 @@
 
 <button
   on:click={clickFn}
-  class={`${className} h-36 w-24 bg-white ${
+  class={`${className} h-36 w-28 bg-white ${
     editMode ? "hover:bg-yellow-200" : "hover:bg-nl"
   } border-2 border-black flex items-center justify-center appearance-none relative`}
 >

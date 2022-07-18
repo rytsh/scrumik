@@ -16,12 +16,17 @@
   import Poker from "@/lib/components/Poker.svelte";
   import Settings from "@/lib/components/Settings.svelte";
   import Vote from "@/lib/components/Vote.svelte";
-  import { subscribe } from "@/lib/helper/room";
+  import { recordRoom, subscribe } from "@/lib/helper/room";
   import { doc, setDoc, type Unsubscribe } from "firebase/firestore";
   import { onDestroy, onMount } from "svelte";
   import { db } from "@/lib/helper/fire";
   import type { CardV, Info, People } from "@/lib/helper/models";
-  import { getName, setName } from "@/lib/helper/local";
+  import {
+    changeIDName,
+    getIDName,
+    recordRoomLocalStorage,
+    setIDName,
+  } from "@/lib/helper/local";
   import { generateName } from "@/lib/helper/name";
   import { checkPass } from "@/lib/helper/pass";
   import TryPass from "@/lib/components/TryPass.svelte";
@@ -34,11 +39,11 @@
   let mounted = false;
   let info: Info = null;
 
-  const nick = getName() ?? setName(generateName());
+  let { id: nickID, nick } = getIDName() ?? setIDName(generateName());
   let people: People = null;
   let cards: CardV[] = [];
 
-  const unsub: Unsubscribe = null;
+  let unsub: Unsubscribe = null;
   onMount(async () => {
     const roomRef = doc(db, "room", id);
     // check password
@@ -48,19 +53,35 @@
       return;
     }
 
+    // record room in local storage
+    let roomName = await recordRoom(db, id);
+
     // create my user
-    setDoc(
+    await setDoc(
       roomRef,
-      { people: { [nick]: { points: "", isLeader: false } } },
+      { people: { [nickID]: { nick: nick, points: "", isLeader: false } } },
       { merge: true }
     );
+
     // subscribe to room
-    subscribe(db, id, (data) => {
+    unsub = subscribe(db, id, (data) => {
       info = data.get("info") as Info;
       people = data.get("people") as People;
       const cardsTmp = data.get("cards") as CardV[];
       cards = cardsTmp?.sort((a, b) => a.text.localeCompare(b.text)) ?? [];
       // console.log(data.data());
+
+      // detect and change ID name
+      if (people[nickID]?.nick != nick) {
+        nick = people[nickID]?.nick;
+        changeIDName(nickID, nick);
+      }
+
+      // change info name
+      if (info?.name != roomName) {
+        roomName = info?.name;
+        recordRoomLocalStorage(id, { id: id, name: roomName });
+      }
     });
 
     tryPass = false;
@@ -90,11 +111,12 @@
           {id}
           {info}
           {nick}
+          {nickID}
           class="bg-white border-black border-2 h-fit"
         />
         <Poker
           {id}
-          {nick}
+          {nickID}
           cardDeck={cards}
           class="flex-1 bg-white border-black border-2 h-fit"
         />

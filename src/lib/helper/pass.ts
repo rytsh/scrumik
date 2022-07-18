@@ -18,8 +18,8 @@ const checkPass = async (roomRef: DocumentReference<DocumentData>, password: str
   return vPasswords?.passCode == password;
 };
 
-const redirectToRoom = (id: string, password: string) => {
-  window.location.href = `/room/${id}${password != "" ? `?password=${password}` : ""
+const redirectToRoom = (id: string, password: string | null) => {
+  window.location.href = `/room/${id}${password ? `?password=${password}` : ""
     }`;
 };
 

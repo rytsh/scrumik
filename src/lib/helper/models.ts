@@ -1,13 +1,24 @@
+type IDNick = {
+  id: string;
+  nick: string;
+}
+
 type People = {
-  [name: string]: {
-    card: CardV;
-    isLeader: boolean;
+  [id: string]: {
+    nick?: string;
+    card?: CardV;
+    isLeader?: boolean;
   }
 };
 
 type Info = {
   name: string;
   description?: string;
+}
+
+type RoomInfo = {
+  id: string;
+  name: string;
 }
 
 type CardV = {
@@ -41,6 +52,7 @@ const defaultCards: CardV[] = [
   { text: "☕", emoji: true },
   { text: "🤯", emoji: true },
   { text: "🔭", emoji: true },
+  { text: "❔", emoji: true },
 ];
 
-export { type RoomSpec, type People, type Info, type CardV, type Password, defaultCards };
+export { type RoomInfo, type IDNick, type RoomSpec, type People, type Info, type CardV, type Password, defaultCards };

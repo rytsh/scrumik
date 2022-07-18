@@ -1,6 +1,5 @@
 <script lang="ts">
   import { db } from "../helper/fire";
-  import { recordRoomLocalStorage } from "../helper/local";
   import { defaultCards, type RoomSpec } from "../helper/models";
   import { createRoom } from "../helper/room";
 
@@ -24,9 +23,6 @@
 
     try {
       const id = await createRoom(db, roomSpec);
-      roomSpec.id = id;
-      // record id in local storage
-      recordRoomLocalStorage(id, roomSpec);
       // goes to room page
       window.location.href = `/room/${id}?leader`;
     } catch (error) {

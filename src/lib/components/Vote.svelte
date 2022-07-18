@@ -3,6 +3,7 @@
   import { db } from "../helper/fire";
 
   import type { People } from "../helper/models";
+  import { stringSort } from "../helper/sort";
 
   let className = "";
   export { className as class };
@@ -11,12 +12,12 @@
   export let description = "";
   export let people: People = null;
 
-  let edit = false;
+  let editMode = false;
 
   const save = () => {
     const roomRef = doc(db, "room", id);
     setDoc(roomRef, { info: { description: description } }, { merge: true });
-    edit = false;
+    editMode = false;
   };
 
   $: totalVoted = people
@@ -36,8 +37,8 @@
   <div
     class="border-b border-black h-7 flex flex-wrap justify-between box-content"
   >
-    <span class="px-2">Voting - {edit ? "" : description}</span>
-    {#if edit}
+    <span class="px-2">Voting - {editMode ? "" : description}</span>
+    {#if editMode}
       <input
         class="bg-gray-200 flex-1 px-2"
         type="text"
@@ -45,7 +46,7 @@
       />
     {/if}
     <div>
-      {#if edit}
+      {#if editMode}
         <button
           class="px-2 h-7 appearance-none border-l border-black self-end hover:bg-green-500 hover:text-white"
           on:click={save}
@@ -55,13 +56,13 @@
       {/if}
       <button
         class={`float-right px-2 h-7 appearance-none border-l border-black self-end hover:text-white ${
-          edit ? "hover:bg-red-500" : "hover:bg-nl"
+          editMode ? "hover:bg-red-500" : "hover:bg-nl"
         }`}
         on:click={() => {
-          edit = !edit;
+          editMode = !editMode;
         }}
       >
-        {edit ? "Cancel" : "Edit"}
+        {editMode ? "Cancel" : "Edit"}
       </button>
     </div>
   </div>
@@ -89,22 +90,18 @@
         >
       </div>
       <table class="w-full">
-        {#each Object.keys(people).sort((a, b) => a.length - b.length) as person (person)}
+        {#each Object.keys(people).sort( (a, b) => stringSort(people[a].nick, people[b].nick) ) as nickID (nickID)}
           <tr
             class={`border-b border-black first:border-t ${
-              people[person].card?.text
-                ? people[person].card?.text == "-"
-                  ? "bg-yellow-100"
-                  : ""
-                : "bg-yellow-100"
+              people[nickID]?.card?.text ? "" : "bg-yellow-100"
             }`}
           >
-            <td class="text-left w-1/2 text-2xl">{person}</td>
+            <td class="text-left w-1/2 text-2xl">{people[nickID]?.nick}</td>
             <td
               class={`${
-                people[person].card?.emoji ? "font-emoji" : ""
-              } text-center text-5xl border border-r-0 border-black`}
-              >{people[person].card?.text ?? "-"}</td
+                people[nickID]?.card?.emoji ? "font-emoji" : ""
+              } text-center text-5xl py-2 border border-r-0 border-black`}
+              >{people[nickID]?.card?.text ?? "-"}</td
             >
           </tr>
         {/each}

@@ -1,7 +1,13 @@
 <script lang="ts">
-  import { doc, setDoc } from "firebase/firestore";
+  import isEqual from "lodash/isEqual";
+  import {
+    arrayRemove,
+    arrayUnion,
+    doc,
+    setDoc,
+    updateDoc,
+  } from "firebase/firestore";
   import { db } from "../helper/fire";
-
   import Card from "./Card.svelte";
   import type { CardV } from "../helper/models";
   import { stringSort } from "../helper/sort";
@@ -11,7 +17,7 @@
   let className = "";
   export { className as class };
   export let id = "";
-  export let nick = "";
+  export let nickID = "";
 
   let editMode = false;
   let newCardScreen = false;
@@ -24,12 +30,12 @@
   let newCardValues = { ...newCardValuesOrginal };
   let modifiedCardDeck: CardV[];
 
-  const selectCard = (event: CustomEvent) => {
+  const selectCard = (event: CustomEvent | { detail: string }) => {
     // select card
     const roomRef = doc(db, "room", id);
     setDoc(
       roomRef,
-      { people: { [nick]: { card: event.detail } } },
+      { people: { [nickID]: { card: event.detail } } },
       { merge: true }
     );
   };
@@ -49,9 +55,26 @@
   };
 
   // set cards
-  const save = () => {
+  const save = async () => {
     const roomRef = doc(db, "room", id);
-    setDoc(roomRef, { cards: modifiedCardDeck }, { merge: true });
+    let addCardDeck = modifiedCardDeck.slice();
+    let deleteCardDeck: CardV[] = [];
+    // get differences
+    for (const card of cardDeck) {
+      const beforeLength = addCardDeck.length;
+      addCardDeck = addCardDeck.filter((c) => !isEqual(c, card));
+      if (addCardDeck.length == beforeLength) {
+        deleteCardDeck = [...deleteCardDeck, card];
+      }
+    }
+
+    try {
+      await updateDoc(roomRef, { cards: arrayRemove(...deleteCardDeck) });
+      await updateDoc(roomRef, { cards: arrayUnion(...addCardDeck) });
+    } catch (e) {
+      console.error(e);
+    }
+    // await setDoc(roomRef, { cards: modifiedCardDeck }, { merge: true });
 
     newCardScreen = false;
     newCardValues = { ...newCardValuesOrginal };
@@ -147,25 +170,35 @@
       </div>
     </div>
 
-    <div class="p-6 flex flex-wrap gap-2">
+    <div class="p-2">
       {#if editMode}
-        {#each modifiedCardDeck as card, i}
-          <Card
-            class="bg-white"
-            text={card.text}
-            emoji={card.emoji}
-            on:delete={() => {
-              modifiedCardDeck = [
-                ...modifiedCardDeck.filter((_, j) => j !== i),
-              ];
-            }}
-            {editMode}
-          />
-        {/each}
+        <div class="grid justify-between auto-fill-col gap-2">
+          {#each modifiedCardDeck as card, i}
+            <Card
+              class="bg-white"
+              text={card.text}
+              emoji={card.emoji}
+              on:delete={() => {
+                modifiedCardDeck = [
+                  ...modifiedCardDeck.filter((_, j) => j !== i),
+                ];
+              }}
+              {editMode}
+            />
+          {/each}
+        </div>
       {:else}
-        {#each cardDeck.sort( (a, b) => stringSort(a.text, b.text) ) as cardV (cardV.text)}
-          <Card on:click={selectCard} text={cardV.text} emoji={cardV.emoji} />
-        {/each}
+        <button
+          class="w-full border-2 border-black hover:bg-nl hover:text-white mb-4"
+          on:click={() => selectCard({ detail: "" })}
+        >
+          Clear Vote
+        </button>
+        <div class="grid justify-between auto-fill-col gap-2">
+          {#each cardDeck.sort( (a, b) => stringSort(a.text, b.text) ) as cardV (cardV.text)}
+            <Card on:click={selectCard} text={cardV.text} emoji={cardV.emoji} />
+          {/each}
+        </div>
       {/if}
       {#if editMode}
         <Card
@@ -179,3 +212,9 @@
     </div>
   </div>
 </div>
+
+<style lang="scss">
+  .auto-fill-col {
+    grid-template-columns: repeat(auto-fill, 7rem);
+  }
+</style>
