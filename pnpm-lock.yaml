@@ -7,6 +7,7 @@ specifiers:
   '@tsconfig/svelte': ^3.0.0
   '@types/html-minifier': ^4.0.2
   '@types/lodash': ^4.14.182
+  '@types/uuid': ^8.3.4
   '@typescript-eslint/eslint-plugin': ^5.30.4
   '@typescript-eslint/parser': ^5.30.4
   autoprefixer: ^10.4.7
@@ -38,6 +39,7 @@ specifiers:
 
 dependencies:
   '@types/lodash': 4.14.182
+  '@types/uuid': 8.3.4
   firebase: 9.9.0
   lodash: 4.17.21
   unique-names-generator: 4.7.1
@@ -896,6 +898,10 @@ packages:
     dependencies:
       source-map: 0.6.1
     dev: true
+
+  /@types/uuid/8.3.4:
+    resolution: {integrity: sha512-c/I8ZRb51j+pYGAu5CrFMRxqZ2ke4y2grEBO5AUjgSkSk+qT2Ea+OdWElz/OiMf5MNpn2b17kuVBwZLQJXzihw==}
+    dev: false
 
   /@typescript-eslint/eslint-plugin/5.30.4_aye54oa67ofzrialru76zxwshi:
     resolution: {integrity: sha512-xjujQISAIa4HAaos8fcMZXmqkuZqMx6icdxkI88jMM/eNe4J8AuTLYnLK+zdm0mBYLyctdFf//UE4/xFCcQzYQ==}

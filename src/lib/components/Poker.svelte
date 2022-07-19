@@ -11,6 +11,7 @@
   import Card from "./Card.svelte";
   import type { CardV } from "../helper/models";
   import { stringSort } from "../helper/sort";
+  import { show } from "@/lib/store/store";
 
   export let cardDeck: CardV[] = [];
 
@@ -31,6 +32,9 @@
   let modifiedCardDeck: CardV[];
 
   const selectCard = (event: CustomEvent | { detail: string }) => {
+    if ($show) {
+      return;
+    }
     // select card
     const roomRef = doc(db, "room", id);
     setDoc(
@@ -89,14 +93,14 @@
   >
     {#if editMode}
       <button
-        class="px-2 bg-white h-7 appearance-none border-l border-black self-end hover:bg-green-500 hover:text-white"
+        class="px-2 bg-white h-7 border-l border-black self-end hover:bg-green-500 hover:text-white"
         on:click={save}
       >
         Save
       </button>
     {/if}
     <button
-      class={`float-right px-2 bg-white h-7 appearance-none border-l border-black self-end hover:text-white ${
+      class={`float-right px-2 bg-white h-7 border-l border-black self-end hover:text-white ${
         editMode ? "hover:bg-red-500" : "hover:bg-nl"
       }`}
       on:click={() => {
@@ -186,10 +190,17 @@
               {editMode}
             />
           {/each}
+          <Card
+            class="bg-yellow-200 hover:bg-indigo-400"
+            on:click={() => {
+              newCardScreen = true;
+            }}
+            text="+"
+          />
         </div>
       {:else}
         <button
-          class="w-full border-2 border-black hover:bg-nl hover:text-white mb-4"
+          class="w-full border border-black hover:bg-nl hover:text-white mb-4"
           on:click={() => selectCard({ detail: "" })}
         >
           Clear Vote
@@ -199,15 +210,6 @@
             <Card on:click={selectCard} text={cardV.text} emoji={cardV.emoji} />
           {/each}
         </div>
-      {/if}
-      {#if editMode}
-        <Card
-          class="bg-yellow-200 hover:bg-indigo-400"
-          on:click={() => {
-            newCardScreen = true;
-          }}
-          text="+"
-        />
       {/if}
     </div>
   </div>

@@ -36,6 +36,7 @@ type RoomSpec = {
   info: Info;
   password: Password;
   people?: People;
+  show?: boolean;
   cards: CardV[];
 };
 

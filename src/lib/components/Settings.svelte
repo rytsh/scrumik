@@ -6,6 +6,9 @@
 
   import type { Info, RoomSpec } from "../helper/models";
   import { generateName } from "../helper/name";
+  import { checkPass, getPass } from "../helper/pass";
+  import { recordRoom } from "../helper/room";
+  import { isLeader } from "../store/store";
 
   let className = "";
   export { className as class };
@@ -14,14 +17,47 @@
   export let nickID = "";
   export let info: Info = null;
 
-  const isLeader = false;
-
   const roomName = "Voting Room";
 
   let editMode = false;
   let form: HTMLFormElement;
   let formNick: HTMLInputElement;
   let error = "";
+
+  const switchMode = async () => {
+    // get current password
+    const password = getRoomPasswordLocalStorage(id);
+    // roomref
+    const roomRef = doc(db, "room", id);
+    // check password for leader
+    const [checkLeader, checkPassword] = await checkPass(roomRef, password);
+
+    const currentIsLeader = $isLeader;
+    if (currentIsLeader) {
+      if (checkLeader) {
+        // switch back password
+        await recordRoom(db, id, (await getPass(roomRef)).passCode);
+        // set leader
+        isLeader.set(false);
+        return;
+      }
+
+      if (!checkPassword) {
+        console.error("password failed");
+        return;
+      }
+
+      // set leader
+      isLeader.set(false);
+    } else {
+      if (!checkLeader) {
+        console.error("leader password failed");
+        return;
+      }
+
+      isLeader.set(true);
+    }
+  };
 
   const currentValues: { [key: string]: string } = {
     roomName: "",
@@ -31,11 +67,10 @@
   };
 
   const fillCurrentValues = () => {
-    const p = getRoomPasswordLocalStorage(id);
     currentValues.roomName = info.name;
     currentValues.nick = nick;
-    currentValues.passCode = p?.passCode;
-    currentValues.leaderCode = p?.leaderCode;
+    currentValues.passCode = "";
+    currentValues.leaderCode = "";
   };
 
   const editSettings = async () => {
@@ -81,10 +116,16 @@
             mapChanges.people = { [nickID]: { nick: value as string } };
             break;
           case "passCode":
-            mapChanges.password.passCode = value as string;
+            mapChanges.password = {
+              ...mapChanges.password,
+              passCode: value as string,
+            };
             break;
           case "leaderCode":
-            mapChanges.password.leaderCode = value as string;
+            mapChanges.password = {
+              ...mapChanges.password,
+              leaderCode: value as string,
+            };
             break;
           default:
             break;
@@ -101,8 +142,8 @@
     }
   };
 
-  const copyInviteLink = (leader = false) => {
-    const p = getRoomPasswordLocalStorage(id);
+  const copyInviteLink = async (leader = false) => {
+    const p = await getPass(doc(db, "room", id));
     let password = p?.passCode;
     if (leader) {
       password = p?.leaderCode;
@@ -111,16 +152,6 @@
     let url = `${window.location.origin}/room/${id}`;
     if (password) {
       url += `?password=${password}`;
-    }
-
-    if (leader && password) {
-      url += "&";
-    } else {
-      url += "?";
-    }
-
-    if (leader) {
-      url += "&leader";
     }
 
     navigator.clipboard.writeText(url);
@@ -133,7 +164,11 @@
 
 <div class={`${className}`}>
   <div class="flex justify-between w-full border-b border-black">
-    <span class="h-7 flex-1 px-2">Leader</span>
+    <button
+      class="h-7 flex-1 px-2 text-left hover:bg-nl hover:text-white"
+      on:click={switchMode}
+      >{$isLeader ? "Leader - switch" : "User - switch"}</button
+    >
     <div>
       <button
         on:click={() => {
@@ -150,15 +185,17 @@
         class="float-right border-l border-black hover:bg-nl hover:text-white px-2 h-7"
         >Invite Link</button
       >
-      <button
-        on:click={() => copyInviteLink(true)}
-        class="float-right border-l border-black hover:bg-nl hover:text-white px-2 h-7"
-        >Leader Link</button
-      >
+      {#if $isLeader}
+        <button
+          on:click={() => copyInviteLink(true)}
+          class="float-right border-l border-black hover:bg-nl hover:text-white px-2 h-7"
+          >Leader Link</button
+        >
+      {/if}
     </div>
   </div>
 
-  <div class="p-6">
+  <div class="p-2">
     {#if editMode}
       <form
         on:submit|preventDefault|stopPropagation={editSettings}
@@ -194,7 +231,7 @@
             on:click={() => (formNick.value = generateName())}>Generate</button
           >
         </label>
-        {#if isLeader}
+        {#if $isLeader}
           <hr class="block py-2 px-2" />
           <label class="inline-block w-full">
             <span class="text-sm font-bold mb-2">Passcode</span>

@@ -19,4 +19,8 @@ body {
   font-family: 'Noto Emoji', sans-serif;
 }
 
+button {
+  @apply appearance-none;
+}
+
 @import 'style';

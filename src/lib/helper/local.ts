@@ -1,5 +1,5 @@
 import { roomList } from "../store/store";
-import type { IDNick, Password } from "./models";
+import type { IDNick } from "./models";
 import { v4 as uuidv4 } from "uuid";
 
 const roomKey = "room";
@@ -26,7 +26,7 @@ const getRoomsLocalStorage = (): any[] | null => {
   return JSON.parse(value);
 };
 
-const getRoomPasswordLocalStorage = (id: string): Password | null => {
+const getRoomPasswordLocalStorage = (id: string): string | null => {
   const rooms = getRoomsLocalStorage();
   if (rooms == null) {
     return;

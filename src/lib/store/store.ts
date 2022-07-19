@@ -8,3 +8,6 @@ export const setRoomList = () => {
   const roomLocal = getRoomsLocalStorage();
   roomList.set(roomLocal);
 };
+
+export const isLeader = writable(false);
+export const show = writable(false);

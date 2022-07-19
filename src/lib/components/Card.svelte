@@ -25,12 +25,12 @@
   on:click={clickFn}
   class={`${className} h-36 w-28 bg-white ${
     editMode ? "hover:bg-yellow-200" : "hover:bg-nl"
-  } border-2 border-black flex items-center justify-center appearance-none relative`}
+  } border border-black flex items-center justify-center relative`}
 >
   <button
     on:click|stopPropagation={deleteFn}
     class:hidden={!editMode}
-    class="h-6 w-6 bg-white hover:bg-red-500 border-l border-b border-black appearance-none absolute top-0 right-0"
+    class="h-6 w-6 bg-white hover:bg-red-500 border-l border-b border-black absolute top-0 right-0"
     >-</button
   >
   <span class={`${emoji ? "font-emoji" : ""} text-5xl pointer-events-none`}

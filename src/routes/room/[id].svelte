@@ -1,11 +1,9 @@
 <script context="module" lang="ts">
   export async function load({ params, url }) {
-    const leader = (url as URL).searchParams.has("leader");
     const password = (url as URL).searchParams.get("password") ?? "";
     return {
       props: {
         id: params.id,
-        leader: leader,
         password: password,
       },
     };
@@ -30,9 +28,9 @@
   import { generateName } from "@/lib/helper/name";
   import { checkPass } from "@/lib/helper/pass";
   import TryPass from "@/lib/components/TryPass.svelte";
+  import { isLeader, show } from "@/lib/store/store";
 
   export let id = "";
-  export let leader = false;
   export let password = "";
 
   let tryPass = false;
@@ -47,19 +45,25 @@
   onMount(async () => {
     const roomRef = doc(db, "room", id);
     // check password
-    if (!(await checkPass(roomRef, password))) {
+    const [checkLeader, checkPassword] = await checkPass(roomRef, password);
+    if (!checkPassword) {
       tryPass = true;
       mounted = true;
       return;
     }
 
+    // set leader
+    isLeader.set(checkLeader);
+
     // record room in local storage
-    let roomName = await recordRoom(db, id);
+    let roomName = await recordRoom(db, id, password);
 
     // create my user
     await setDoc(
       roomRef,
-      { people: { [nickID]: { nick: nick, points: "", isLeader: false } } },
+      {
+        people: { [nickID]: { nick: nick, points: "", isLeader: checkLeader } },
+      },
       { merge: true }
     );
 
@@ -71,16 +75,37 @@
       cards = cardsTmp?.sort((a, b) => a.text.localeCompare(b.text)) ?? [];
       // console.log(data.data());
 
+      show.set(data.get("show") as boolean);
+
+      // check kicked
+      if (!people[nickID]) {
+        window.location.href =
+          "/?msg=You%20have%20been%20kicked!!&kickRoom=" + id;
+
+        return;
+      }
+
       // detect and change ID name
       if (people[nickID]?.nick != nick) {
         nick = people[nickID]?.nick;
-        changeIDName(nickID, nick);
+        if (nick) {
+          changeIDName(nickID, nick);
+        }
       }
 
       // change info name
       if (info?.name != roomName) {
         roomName = info?.name;
-        recordRoomLocalStorage(id, { id: id, name: roomName });
+        recordRoomLocalStorage(id, {
+          id: id,
+          name: roomName,
+          password: password,
+        });
+      }
+
+      // change show status
+      if (Object.keys(people).every((id) => people[id].card.text)) {
+        show.set(true);
       }
     });
 
@@ -99,12 +124,12 @@
   {#if tryPass}
     <TryPass {id} />
   {:else}
-    <div class="flex flex-row gap-2">
+    <div class="flex flex-col xl:flex-row gap-2">
       <Vote
         {id}
         description={info?.description ?? ""}
         {people}
-        class="flex-1 bg-white border-black border-2"
+        class="flex-1 bg-white border-black border-t border-b sm:border"
       />
       <div class="flex flex-1 flex-col gap-2">
         <Settings
@@ -112,13 +137,13 @@
           {info}
           {nick}
           {nickID}
-          class="bg-white border-black border-2 h-fit"
+          class="bg-white border-black border-t border-b sm:border h-fit"
         />
         <Poker
           {id}
           {nickID}
           cardDeck={cards}
-          class="flex-1 bg-white border-black border-2 h-fit"
+          class="flex-1 bg-white border-black border-t border-b sm:border h-fit"
         />
       </div>
     </div>

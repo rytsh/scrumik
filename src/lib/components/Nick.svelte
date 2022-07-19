@@ -20,14 +20,14 @@
     <div>
       {#if editMode}
         <button
-          class="px-2 h-7 appearance-none border-l border-b border-black self-end hover:bg-green-500 hover:text-white"
+          class="px-2 h-7 border-l border-b border-black self-end hover:bg-green-500 hover:text-white"
           on:click={save}
         >
           Save
         </button>
       {/if}
       <button
-        class={`float-right px-2 h-7 appearance-none border-l border-b border-black self-end hover:text-white ${
+        class={`float-right px-2 h-7 border-l border-b border-black self-end hover:text-white ${
           editMode ? "hover:bg-red-500" : "hover:bg-nl"
         }`}
         on:click={() => {
@@ -42,10 +42,17 @@
     {#if editMode}
       <form on:submit|preventDefault|stopPropagation={save}>
         <input
-          class="bg-gray-100 border-gray-200 flex-1 px-2 text-xl font-bold"
+          class="bg-gray-100 border border-gray-200 flex-1 px-2 text-xl font-bold"
           type="text"
           bind:value={nick}
         />
+        <button
+          class="bg-white border border-black px-2 text-xl hover:bg-nl hover:text-white"
+          type="button"
+          on:click={() => (nick = generateName())}
+        >
+          Generate Name
+        </button>
       </form>
     {:else}
       <span class="font-bold text-xl px-2">{nick}</span>

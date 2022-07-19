@@ -1,5 +1,9 @@
 {
-  "name": "_~vitesse-template~_",
+  "name": "_~scrumik~_",
+  "author": {
+    "name": "Eray Ates",
+    "email": "eates23@gmail.com"
+  },
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -46,6 +50,7 @@
   },
   "dependencies": {
     "@types/lodash": "^4.14.182",
+    "@types/uuid": "^8.3.4",
     "firebase": "^9.9.0",
     "lodash": "^4.17.21",
     "unique-names-generator": "^4.7.1",

@@ -21,10 +21,15 @@
       cards: defaultCards,
     };
 
+    // fix passCode
+    if (roomSpec.password.leaderCode == "") {
+      roomSpec.password.leaderCode = roomSpec.password.passCode;
+    }
+
     try {
       const id = await createRoom(db, roomSpec);
       // goes to room page
-      window.location.href = `/room/${id}?leader`;
+      window.location.href = `/room/${id}?password=${roomSpec.password.leaderCode}`;
     } catch (error) {
       console.error(error);
     }
@@ -61,7 +66,7 @@
         type="text"
         name="leaderCode"
         autocomplete="off"
-        placeholder="Optional passcode to be leader"
+        placeholder="If not set, will be the same as passcode"
         class="mb-4 form-input"
       />
     </label>
