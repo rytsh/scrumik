@@ -89,8 +89,14 @@
 
 <div class={`${className} relative`}>
   <div
-    class="w-full stripe-black border-b border-black flex flex-wrap justify-end box-content"
+    class="w-full border-b border-black flex flex-wrap justify-end box-content"
   >
+    <button
+      class="flex-1 px-2 bg-white hover:bg-nl hover:text-white"
+      on:click={() => selectCard({ detail: "" })}
+    >
+      Clear Vote
+    </button>
     {#if editMode}
       <button
         class="px-2 bg-white h-7 border-l border-black self-end hover:bg-green-500 hover:text-white"
@@ -100,7 +106,7 @@
       </button>
     {/if}
     <button
-      class={`float-right px-2 bg-white h-7 border-l border-black self-end hover:text-white ${
+      class={`px-2 bg-white h-7 border-l border-black self-end hover:text-white ${
         editMode ? "hover:bg-red-500" : "hover:bg-nl"
       }`}
       on:click={() => {
@@ -199,12 +205,6 @@
           />
         </div>
       {:else}
-        <button
-          class="w-full border border-black hover:bg-nl hover:text-white mb-4"
-          on:click={() => selectCard({ detail: "" })}
-        >
-          Clear Vote
-        </button>
         <div class="grid justify-between auto-fill-col gap-2">
           {#each cardDeck.sort( (a, b) => stringSort(a.text, b.text) ) as cardV (cardV.text)}
             <Card on:click={selectCard} text={cardV.text} emoji={cardV.emoji} />

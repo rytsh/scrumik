@@ -5,6 +5,7 @@
   import type { People } from "../helper/models";
   import { stringSort } from "../helper/sort";
   import { isLeader, show } from "../store/store";
+  import Icon from "./Icon.svelte";
 
   let className = "";
   export { className as class };
@@ -34,12 +35,31 @@
     deleteList = {};
   };
 
+  const averageCount = (people: People) => {
+    let totalPeople = 0;
+    const total = Object.keys(people).reduce((total, current) => {
+      let v = 0;
+      const num = Number(people[current].card?.text);
+      if (!isNaN(num)) {
+        totalPeople++;
+        v = num;
+      }
+
+      return total + v;
+    }, 0);
+
+    return total / totalPeople;
+  };
+
   $: totalVoted = people
     ? Object.keys(people).reduce((total, current) => {
         const v = people[current].card?.text ? 1 : 0;
         return total + v;
       }, 0)
     : 0;
+
+  $: average = averageCount(people);
+
   let deleteList = {} as { [key: string]: boolean };
   const addDeleteList = (id: string) => {
     deleteList[id] = true;
@@ -84,7 +104,7 @@
     <span class="px-2">Voting - {editMode ? "" : description}</span>
     {#if editMode}
       <input
-        class="bg-gray-200 flex-1 px-2"
+        class="bg-gray-200 flex-1 px-2 min-w-[2rem]"
         type="text"
         bind:value={description}
       />
@@ -129,6 +149,9 @@
             Show Results
           </button>
         </div>
+        {#if $show}
+          <span class="text-xl font-bold">{average}</span>
+        {/if}
         <span class="text-xl font-bold"
           ><span
             class={`${
@@ -145,11 +168,14 @@
             } ${deleteList[nickID] ? "stripe-gray" : ""}`}
           >
             <td class="text-left w-1/2 text-2xl"
-              >{people[nickID]?.nick}<span
-                class:invisible={!people[nickID]?.isLeader}
-                class="float-right pr-2">$</span
-              ></td
-            >
+              >{people[nickID]?.nick}<Icon
+                class={`float-right pr-2 ${
+                  people[nickID]?.isLeader ? "" : "invisible"
+                }`}
+                icon="king"
+                title="Leader"
+              />
+            </td>
             <td
               class={`${
                 people[nickID]?.card?.emoji || !$show ? "font-emoji" : ""

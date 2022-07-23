@@ -318,7 +318,7 @@
                   class="bg-white w-full h-7 text-ellipsis inline-block flex-1 px-2"
                   type="text"
                   readonly
-                  alt={boxedLink}
+                  title={boxedLink}
                   value={boxedLink}
                 />
                 <button
