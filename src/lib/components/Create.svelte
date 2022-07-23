@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { push } from "svelte-spa-router";
   import { db } from "../helper/fire";
   import { defaultCards, type RoomSpec } from "../helper/models";
   import { createRoom } from "../helper/room";
@@ -29,7 +30,7 @@
     try {
       const id = await createRoom(db, roomSpec);
       // goes to room page
-      window.location.href = `/room/${id}?password=${roomSpec.password.leaderCode}`;
+      push(`/room/${id}?password=${roomSpec.password.leaderCode}`);
     } catch (error) {
       console.error(error);
     }

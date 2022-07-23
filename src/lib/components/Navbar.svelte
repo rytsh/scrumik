@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { link } from "svelte-spa-router";
+
   export let title = "scrumik";
   export let message = "scrum poker tool";
   let className = "";
@@ -6,7 +8,11 @@
 </script>
 
 <div class={`${className} bg-black text-white flex items-center`}>
-  <a href="/" class="appearance-none text-xl font-bold mr-4 hover:text-nl">
+  <a
+    href="/"
+    class="appearance-none text-xl font-bold mr-4 hover:text-nl"
+    use:link
+  >
     {title}
   </a>
 

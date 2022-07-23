@@ -5,17 +5,29 @@ import { v4 as uuidv4 } from "uuid";
 const roomKey = "room";
 const nameIDKey = "id";
 
-const recordRoomLocalStorage = (key: string, value: any) => {
+const recordRoomLocalStorage = (key: string, value: any, append = true) => {
   let rooms = getRoomsLocalStorage();
-  if (rooms == null) {
+  if (!rooms) {
     rooms = [value];
   } else {
-    rooms = rooms.filter((room) => room.id !== key);
-    rooms.push(value);
+    let found: any;
+    rooms = rooms.filter((room) => {
+      if (room.id != key) {
+        return true;
+      }
+
+      found = room;
+      return false;
+    });
+
+    if (append) {
+      found = { ...found, ...value };
+    }
+
+    rooms.push(found);
   }
 
   localStorage.setItem(roomKey, JSON.stringify(rooms));
-  roomList.set(rooms);
 };
 
 const getRoomsLocalStorage = (): any[] | null => {
@@ -33,7 +45,17 @@ const getRoomPasswordLocalStorage = (id: string): string | null => {
   }
 
   const room = rooms.find((room) => room.id == id);
-  return room?.password;
+  return room?.password ?? "";
+};
+
+const getRoomNameLocalStorage = (id: string): string | null => {
+  const rooms = getRoomsLocalStorage();
+  if (rooms == null) {
+    return;
+  }
+
+  const room = rooms.find((room) => room.id == id);
+  return room?.name;
 };
 
 const removeRoomLocalStorage = (key: string) => {
@@ -73,4 +95,4 @@ const changeIDName = (id: string, nick: string) => {
   localStorage.setItem(nameIDKey, JSON.stringify(v));
 };
 
-export { getIDName, setIDName, changeIDName, recordRoomLocalStorage, getRoomsLocalStorage, getRoomPasswordLocalStorage, removeRoomLocalStorage, removeAllRoomsLocalStorage };
+export { getIDName, setIDName, changeIDName, recordRoomLocalStorage, getRoomsLocalStorage, getRoomPasswordLocalStorage, getRoomNameLocalStorage, removeRoomLocalStorage, removeAllRoomsLocalStorage };

@@ -28,12 +28,6 @@
     "paths": {
       "@/*": [
         "src/*"
-      ],
-      "$lib": [
-        "src/lib"
-      ],
-      "$lib/*": [
-        "src/lib/*"
       ]
     }
   },
@@ -56,5 +50,5 @@
   "exclude": [
     "node_modules/*"
   ],
-  "extends": "./.svelte-kit/tsconfig.json",
+  "extends": "@tsconfig/svelte/tsconfig.json"
 }

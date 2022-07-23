@@ -1,6 +1,6 @@
 <script lang="ts">
+  import { push } from "svelte-spa-router";
   import { db } from "../helper/fire";
-  import { redirectToRoom } from "../helper/pass";
   import { isReachableRoom } from "../helper/room";
 
   let className = "";
@@ -22,7 +22,7 @@
         throw new Error("Passcode is not correct");
       }
 
-      redirectToRoom(roomID, password);
+      push(`/room/${roomID}?password=${password}`);
     } catch (error) {
       warn = error.message;
     }

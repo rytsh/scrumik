@@ -1,5 +1,7 @@
 <script lang="ts">
   import { onDestroy, onMount } from "svelte";
+  import { link } from "svelte-spa-router";
+
   import { removeRoomLocalStorage } from "../helper/local";
   import { confirm } from "../helper/ask";
   import { roomList, setRoomList } from "../store/store";
@@ -28,7 +30,8 @@
           >
             <a
               class="w-full leading-10 hover:bg-green-500 hover:text-white px-2"
-              href={`/room/${room.id}`}>{room.name}</a
+              href={`/room/${room.id}`}
+              use:link>{room.name}</a
             >
             <button
               class="border-l border-black bg-white hover:bg-red-500 hover:text-white px-2"

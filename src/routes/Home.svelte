@@ -1,29 +1,25 @@
-<script context="module" lang="ts">
-  export async function load({ url }) {
-    const msg = (url as URL).searchParams.get("msg") ?? "";
-    const kickRoom = (url as URL).searchParams.get("kickRoom") ?? "";
-    return {
-      props: {
-        msg: msg,
-        kickRoom: kickRoom,
-      },
-    };
-  }
-</script>
-
 <script lang="ts">
+  import { querystring } from "svelte-spa-router";
+
   import Create from "@/lib/components/Create.svelte";
   import Join from "@/lib/components/Join.svelte";
   import Nick from "@/lib/components/Nick.svelte";
   import RoomList from "@/lib/components/RoomList.svelte";
   import { removeRoomLocalStorage } from "@/lib/helper/local";
 
-  export let msg = "";
-  export let kickRoom = "";
+  let msg = "";
 
-  if (kickRoom) {
-    removeRoomLocalStorage(kickRoom);
-  }
+  const queryCheck = (qString: string) => {
+    const searchParams = new URLSearchParams(qString);
+    msg = searchParams.get("msg") ?? "";
+    const kickRoom = searchParams.get("kickRoom") ?? "";
+
+    if (kickRoom) {
+      removeRoomLocalStorage(kickRoom);
+    }
+  };
+
+  $: queryCheck($querystring);
 </script>
 
 {#if msg}

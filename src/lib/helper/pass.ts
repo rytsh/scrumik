@@ -26,9 +26,4 @@ const getPass = async (roomRef: DocumentReference<DocumentData>) => {
   return vPasswords;
 };
 
-const redirectToRoom = (id: string, password: string | null) => {
-  window.location.href = `/room/${id}${password ? `?password=${password}` : ""
-    }`;
-};
-
-export { checkPass, getPass, redirectToRoom };
+export { checkPass, getPass };
