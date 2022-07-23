@@ -41,7 +41,7 @@ const getRoomsLocalStorage = (): any[] | null => {
 const getRoomPasswordLocalStorage = (id: string): string | null => {
   const rooms = getRoomsLocalStorage();
   if (rooms == null) {
-    return;
+    return "";
   }
 
   const room = rooms.find((room) => room.id == id);

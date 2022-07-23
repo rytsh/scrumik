@@ -115,11 +115,20 @@
     leaderCode: "",
   };
 
-  const fillCurrentValues = () => {
+  const fillCurrentValues = async () => {
     currentValues.roomName = info.name;
     currentValues.nick = nick;
-    currentValues.passCode = "";
-    currentValues.leaderCode = "";
+
+    if ($isLeader) {
+      // roomref
+      const roomRef = doc(db, "room", id);
+      const pwObj = await getPass(roomRef);
+      currentValues.passCode = pwObj.passCode;
+      currentValues.leaderCode = pwObj.leaderCode;
+    } else {
+      currentValues.passCode = "";
+      currentValues.leaderCode = "";
+    }
   };
 
   const editSettings = async () => {
