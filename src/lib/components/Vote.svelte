@@ -58,7 +58,7 @@
       }, 0)
     : 0;
 
-  $: average = averageCount(people);
+  $: average = people ? averageCount(people) : 0;
 
   let deleteList = {} as { [key: string]: boolean };
   const addDeleteList = (id: string) => {
