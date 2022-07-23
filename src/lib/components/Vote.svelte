@@ -141,7 +141,7 @@
         {#each Object.keys(people).sort( (a, b) => stringSort(people[a].nick, people[b].nick) ) as nickID (nickID)}
           <tr
             class={`odd:bg-gray-100 border-b border-black first:border-t ${
-              people[nickID]?.card?.text ? "" : "bg-yellow-100"
+              people[nickID]?.card?.text ? "" : "!bg-yellow-100"
             } ${deleteList[nickID] ? "stripe-gray" : ""}`}
           >
             <td class="text-left w-1/2 text-2xl"
