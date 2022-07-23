@@ -231,7 +231,7 @@
       >
       <button
         on:click={async () => {
-          boxedLink = await getLink(true);
+          boxedLink = await getLink(false);
           boxedInfo = "Selected Invite link";
           boxedType = "link";
           boxedQR = await generateQR(boxedLink);
