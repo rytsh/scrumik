@@ -3,7 +3,9 @@
 
   enum IconTypes {
     king = "M16.896 10l-4.896-8-4.896 8-7.104-4 3 11v5h18v-5l3-11-7.104 4zm-11.896 10v-2h14v2h-14zm14.2-4h-14.4l-1.612-5.909 4.615 2.598 4.197-6.857 4.197 6.857 4.615-2.598-1.612 5.909z",
+    reload = "M22 3v18h-5v-2h3v-14h-6v3l-5.25-4 5.25-4v3h8zm-12 16h-6v-14h3v-2h-5v18h8v3l5.25-4-5.25-4v3z",
   }
+
   type IconTypesString = keyof typeof IconTypes;
 
   type PosTypes = "left" | "down" | "up" | undefined;

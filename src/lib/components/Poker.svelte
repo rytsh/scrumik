@@ -1,5 +1,5 @@
 <script lang="ts">
-  import isEqual from "lodash/isEqual";
+  import { v4 as uuidv4 } from "uuid";
   import {
     arrayRemove,
     arrayUnion,
@@ -11,6 +11,7 @@
   import Card from "./Card.svelte";
   import type { CardV } from "../helper/models";
   import { stringSort } from "../helper/sort";
+  import { getCardId } from "../helper/id";
   import { show } from "@/lib/store/store";
 
   export let cardDeck: CardV[] = [];
@@ -46,13 +47,16 @@
 
   const newCard = () => {
     // create new card
-    modifiedCardDeck = [
-      ...modifiedCardDeck,
-      {
-        text: newCardValues.text,
-        emoji: newCardValues.emoji,
-      },
-    ];
+    const id = uuidv4();
+    const cardV = {
+      text: newCardValues.text,
+      emoji: newCardValues.emoji,
+      id: id,
+    };
+
+    modifiedCardDeck = [...modifiedCardDeck, cardV];
+
+    addAddList(id, cardV);
 
     newCardScreen = false;
     newCardValues = { ...newCardValuesOrginal };
@@ -61,29 +65,44 @@
   // set cards
   const save = async () => {
     const roomRef = doc(db, "room", id);
-    let addCardDeck = modifiedCardDeck.slice();
-    let deleteCardDeck: CardV[] = [];
-    // get differences
-    for (const card of cardDeck) {
-      const beforeLength = addCardDeck.length;
-      addCardDeck = addCardDeck.filter((c) => !isEqual(c, card));
-      if (addCardDeck.length == beforeLength) {
-        deleteCardDeck = [...deleteCardDeck, card];
-      }
-    }
 
     try {
-      await updateDoc(roomRef, { cards: arrayRemove(...deleteCardDeck) });
-      await updateDoc(roomRef, { cards: arrayUnion(...addCardDeck) });
+      await updateDoc(roomRef, {
+        cards: arrayRemove(...Object.values(deleteList)),
+      });
+      await updateDoc(roomRef, {
+        cards: arrayUnion(...Object.values(addList)),
+      });
     } catch (e) {
       console.error(e);
     }
-    // await setDoc(roomRef, { cards: modifiedCardDeck }, { merge: true });
 
     newCardScreen = false;
     newCardValues = { ...newCardValuesOrginal };
 
+    deleteList = {};
+    addList = {};
+
     editMode = false;
+  };
+
+  let deleteList = {} as { [key: string]: CardV };
+  const addDeleteList = (id: string, cardV: CardV) => {
+    deleteList[id] = cardV;
+    deleteList = { ...deleteList };
+  };
+  const delDeleteList = (id: string) => {
+    delete deleteList[id];
+    deleteList = { ...deleteList };
+  };
+
+  let addList = {} as { [key: string]: CardV };
+  const addAddList = (id: string, cardV: CardV) => {
+    addList[id] = cardV;
+  };
+  const delAddList = (id: string) => {
+    delete addList[id];
+    addList = { ...addList };
   };
 </script>
 
@@ -95,7 +114,7 @@
       class="flex-1 px-2 bg-white hover:bg-nl hover:text-white"
       on:click={() => selectCard({ detail: "" })}
     >
-      Clear Vote
+      Clear My Vote
     </button>
     {#if editMode}
       <button
@@ -110,13 +129,17 @@
         editMode ? "hover:bg-red-500" : "hover:bg-nl"
       }`}
       on:click={() => {
-        if (editMode) {
-          newCardScreen = false;
-          newCardValues = { ...newCardValuesOrginal };
-        } else {
-          modifiedCardDeck = cardDeck.slice();
-        }
         editMode = !editMode;
+
+        if (editMode) {
+          modifiedCardDeck = cardDeck.slice();
+          return;
+        }
+
+        newCardScreen = false;
+        newCardValues = { ...newCardValuesOrginal };
+        deleteList = {};
+        addList = {};
       }}
     >
       {editMode ? "Cancel" : "Edit"}
@@ -183,15 +206,36 @@
     <div class="p-2">
       {#if editMode}
         <div class="grid justify-between auto-fill-col gap-2">
-          {#each modifiedCardDeck as card, i}
+          {#each modifiedCardDeck as card (getCardId(card))}
             <Card
-              class="bg-white"
+              class={`${
+                editMode
+                  ? `${
+                      deleteList[getCardId(card)]
+                        ? "stripe-gray"
+                        : `${
+                            addList[getCardId(card)]
+                              ? "bg-indigo-200"
+                              : "bg-gray-100"
+                          }`
+                    } cursor-not-allowed`
+                  : "bg-white"
+              }`}
               text={card.text}
               emoji={card.emoji}
               on:delete={() => {
-                modifiedCardDeck = [
-                  ...modifiedCardDeck.filter((_, j) => j !== i),
-                ];
+                if (addList[getCardId(card)]) {
+                  delAddList(getCardId(card));
+                  modifiedCardDeck = [
+                    ...modifiedCardDeck.filter(
+                      (c) => getCardId(c) != getCardId(card)
+                    ),
+                  ];
+                } else {
+                  deleteList[getCardId(card)]
+                    ? delDeleteList(getCardId(card))
+                    : addDeleteList(getCardId(card), card);
+                }
               }}
               {editMode}
             />

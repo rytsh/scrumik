@@ -29,7 +29,7 @@ const isReachableRoom = async (db: Firestore, roomID: string, password: string) 
       return true;
     }
 
-    return roomPass.passCode === password || roomPass.leaderCode === password;
+    return roomPass.passCode === password;
   } else {
     // doc.data() will be undefined in this case
     throw new Error("No such document!");

@@ -2,7 +2,7 @@
 
 Scrum poker application based firestore.
 
-Use in this website [`scrumik.dev`](https://scrumik.dev)
+Use in this website [`scrumik.devusage.com`](https://scrumik.devusage.com/)
 
 Icons of poker cards [Noto Emoji](https://fonts.google.com/noto/specimen/Noto+Emoji)
 

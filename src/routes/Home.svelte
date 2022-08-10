@@ -38,7 +38,7 @@
     <RoomList class="flex-1 border-t border-b sm:border border-black h-fit" />
   </div>
   <div class="flex flex-1 flex-col gap-3">
-    <Nick class="flex-1 border-t border-b sm:border border-black h-fit" />
-    <Create class="flex-1 border-t border-b sm:border border-black h-fit" />
+    <Nick class="border-t border-b sm:border border-black h-fit" />
+    <Create class="border-t border-b sm:border border-black h-fit" />
   </div>
 </div>

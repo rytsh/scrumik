@@ -7,7 +7,6 @@ type People = {
   [id: string]: {
     nick?: string;
     card?: CardV;
-    isLeader?: boolean;
   }
 };
 
@@ -24,11 +23,11 @@ type RoomInfo = {
 type CardV = {
   text: string;
   emoji: boolean;
+  id: string;
 }
 
 type Password = {
   passCode: string;
-  leaderCode: string;
 }
 
 type RoomSpec = {
@@ -41,19 +40,19 @@ type RoomSpec = {
 };
 
 const defaultCards: CardV[] = [
-  { text: "1", emoji: false },
-  { text: "2", emoji: false },
-  { text: "3", emoji: false },
-  { text: "5", emoji: false },
-  { text: "8", emoji: false },
-  { text: "13", emoji: false },
-  { text: "21", emoji: false },
-  { text: "34", emoji: false },
-  { text: "55", emoji: false },
-  { text: "☕", emoji: true },
-  { text: "🤯", emoji: true },
-  { text: "🔭", emoji: true },
-  { text: "❔", emoji: true },
+  { text: "1", emoji: false, id: "1" },
+  { text: "2", emoji: false, id: "2" },
+  { text: "3", emoji: false, id: "3" },
+  { text: "5", emoji: false, id: "5" },
+  { text: "8", emoji: false, id: "8" },
+  { text: "13", emoji: false, id: "13" },
+  { text: "21", emoji: false, id: "21" },
+  { text: "34", emoji: false, id: "34" },
+  { text: "55", emoji: false, id: "55" },
+  { text: "☕", emoji: true, id: "coffee" },
+  { text: "🤯", emoji: true, id: "exploding-head" },
+  { text: "🔭", emoji: true, id: "telescope" },
+  { text: "❔", emoji: true, id: "question" },
 ];
 
 export { type RoomInfo, type IDNick, type RoomSpec, type People, type Info, type CardV, type Password, defaultCards };

@@ -1,11 +1,11 @@
 <script lang="ts">
   import { doc, setDoc, updateDoc } from "firebase/firestore";
   import { db } from "../helper/fire";
+  import round from "lodash/round";
 
   import type { People } from "../helper/models";
   import { stringSort } from "../helper/sort";
-  import { isLeader, show } from "../store/store";
-  import Icon from "./Icon.svelte";
+  import { show } from "../store/store";
 
   let className = "";
   export { className as class };
@@ -20,16 +20,14 @@
     const roomRef = doc(db, "room", id);
     setDoc(roomRef, { info: { description: description } }, { merge: true });
 
-    if ($isLeader) {
-      // delete list
-      const newPeople = {} as People;
-      Object.keys(people).forEach((key) => {
-        if (!deleteList[key]) {
-          newPeople[key] = people[key];
-        }
-      });
-      updateDoc(roomRef, { people: newPeople });
-    }
+    // delete list
+    const newPeople = {} as People;
+    Object.keys(people).forEach((key) => {
+      if (!deleteList[key]) {
+        newPeople[key] = people[key];
+      }
+    });
+    updateDoc(roomRef, { people: newPeople });
 
     editMode = false;
     deleteList = {};
@@ -38,8 +36,13 @@
   const averageCount = (people: People) => {
     let totalPeople = 0;
     const total = Object.keys(people).reduce((total, current) => {
+      const txt = people[current].card?.text;
+      if (txt == "") {
+        return total;
+      }
+
       let v = 0;
-      const num = Number(people[current].card?.text);
+      const num = Number(txt);
       if (!isNaN(num)) {
         totalPeople++;
         v = num;
@@ -48,7 +51,7 @@
       return total + v;
     }, 0);
 
-    return total / totalPeople;
+    return round(total / totalPeople, 2);
   };
 
   $: totalVoted = people
@@ -89,8 +92,6 @@
   };
 
   const showResults = () => {
-    if (!$isLeader) return;
-
     const roomRef = doc(db, "room", id);
     setDoc(roomRef, { show: true }, { merge: true });
     show.set(true);
@@ -101,7 +102,10 @@
   <div
     class="border-b border-black h-7 flex flex-wrap justify-between box-content"
   >
-    <span class="px-2">Voting - {editMode ? "" : description}</span>
+    <span class="px-2">
+      Voting -
+      <i>{editMode ? "" : description ? description : "Topic Name"}</i>
+    </span>
     {#if editMode}
       <input
         class="bg-gray-200 flex-1 px-2 min-w-[2rem]"
@@ -127,7 +131,7 @@
           deleteList = {};
         }}
       >
-        {editMode ? "Cancel" : "Edit"}
+        {editMode ? "Cancel" : "Edit topic & users"}
       </button>
     </div>
   </div>
@@ -142,7 +146,6 @@
             Clear Votes
           </button>
           <button
-            class:invisible={!$isLeader}
             on:click={showResults}
             class="px-2 h-7 border border-black hover:bg-nl hover:text-white"
           >
@@ -167,21 +170,15 @@
               people[nickID]?.card?.text ? "" : "!bg-yellow-100"
             } ${deleteList[nickID] ? "stripe-gray" : ""}`}
           >
-            <td class="text-left w-1/2 text-2xl"
-              >{people[nickID]?.nick}<Icon
-                class={`float-right pr-2 ${
-                  people[nickID]?.isLeader ? "" : "invisible"
-                }`}
-                icon="king"
-                title="Leader"
-              />
+            <td class="text-left w-1/2 text-2xl">
+              {people[nickID]?.nick}
             </td>
             <td
               class={`${
                 people[nickID]?.card?.emoji || !$show ? "font-emoji" : ""
               } text-center text-4xl py-1 border border-r-0 border-black relative`}
               >{$show ? people[nickID]?.card?.text ?? "-" : "🟧"}
-              {#if $isLeader && editMode}
+              {#if editMode}
                 <button
                   class="bg-white border-l border-r border-black hover:bg-red-500 absolute top-0 right-0 h-full text-2xl px-2"
                   on:click={() =>

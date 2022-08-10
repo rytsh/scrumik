@@ -1,18 +1,40 @@
 <script lang="ts">
+  import { onDestroy, onMount } from "svelte";
+
   import { changeIDName, getIDName, setIDName } from "../helper/local";
   import { generateName } from "../helper/name";
+  import Icon from "./Icon.svelte";
 
   let editMode = false;
 
   let className = "";
   export { className as class };
 
-  let { id: nickID, nick } = getIDName() ?? setIDName(generateName());
+  let nickID = "";
+  let nick = "";
+
+  let nickChange = "";
 
   const save = () => {
-    changeIDName(nickID, nick);
+    changeIDName(nickID, nickChange);
+    nick = nickChange;
     editMode = false;
   };
+
+  const setName = () => {
+    const idNick = getIDName() ?? setIDName(generateName());
+    nickID = idNick.id;
+    nick = idNick.nick;
+  };
+
+  onMount(() => {
+    setName();
+    window.addEventListener("storage", setName);
+  });
+
+  onDestroy(() => {
+    window.removeEventListener("storage", setName);
+  });
 </script>
 
 <div class={`${className} bg-white`}>
@@ -32,6 +54,7 @@
         }`}
         on:click={() => {
           editMode = !editMode;
+          if (editMode) nickChange = nick;
         }}
       >
         {editMode ? "Cancel" : "Edit Nickname"}
@@ -40,18 +63,26 @@
   </div>
   <div class="py-6 pl-4 pr-6">
     {#if editMode}
-      <form on:submit|preventDefault|stopPropagation={save}>
+      <form
+        on:submit|preventDefault|stopPropagation={save}
+        class="flex items-center"
+      >
         <input
-          class="bg-gray-100 border border-gray-200 flex-1 px-2 text-xl font-bold"
+          class="bg-gray-100 border border-gray-200 px-2 text-xl font-bold"
           type="text"
-          bind:value={nick}
+          bind:value={nickChange}
         />
         <button
           class="bg-white border border-black px-2 text-xl hover:bg-nl hover:text-white"
           type="button"
-          on:click={() => (nick = generateName())}
+          on:click={() => (nickChange = generateName())}
         >
-          Generate Name
+          <Icon
+            icon="reload"
+            height="1.75rem"
+            title="new name generate"
+            class="pointer-events-none"
+          />
         </button>
       </form>
     {:else}

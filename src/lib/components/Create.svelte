@@ -17,20 +17,18 @@
       },
       password: {
         passCode: formData.get("passCode") as string,
-        leaderCode: formData.get("leaderCode") as string,
       },
       cards: defaultCards,
     };
 
-    // fix passCode
-    if (roomSpec.password.leaderCode == "") {
-      roomSpec.password.leaderCode = roomSpec.password.passCode;
-    }
-
     try {
       const id = await createRoom(db, roomSpec);
       // goes to room page
-      push(`/room/${id}?password=${roomSpec.password.leaderCode}`);
+      let urlRoom = `/room/${id}`;
+      if (roomSpec.password.passCode) {
+        urlRoom += `?password=${roomSpec.password.passCode}`;
+      }
+      push(urlRoom);
     } catch (error) {
       console.error(error);
     }
@@ -58,16 +56,6 @@
         name="passCode"
         autocomplete="off"
         placeholder="Optional passcode to join room"
-        class="mb-4 form-input"
-      />
-    </label>
-    <label>
-      <span class="text-sm font-bold block mb-2">Leader Passcode</span>
-      <input
-        type="text"
-        name="leaderCode"
-        autocomplete="off"
-        placeholder="If not set, will be the same as passcode"
         class="mb-4 form-input"
       />
     </label>

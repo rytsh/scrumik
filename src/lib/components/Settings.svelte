@@ -2,16 +2,10 @@
   import { doc, setDoc } from "firebase/firestore";
   import { db } from "../helper/fire";
 
-  import {
-    getRoomPasswordLocalStorage,
-    recordRoomLocalStorage,
-  } from "../helper/local";
-
   import type { Info, RoomSpec } from "../helper/models";
   import { generateName } from "../helper/name";
-  import { checkPass, getPass } from "../helper/pass";
+  import { getPass } from "../helper/pass";
   import { generateQR } from "../helper/qr";
-  import { isLeader } from "../store/store";
 
   let className = "";
   export { className as class };
@@ -39,75 +33,6 @@
     boxedQR = "";
   };
 
-  const switchMode = async () => {
-    // get current password
-    const password = getRoomPasswordLocalStorage(id);
-    // roomref
-    const roomRef = doc(db, "room", id);
-    // check password for leader
-    const [checkLeader] = await checkPass(roomRef, password);
-
-    const currentIsLeader = $isLeader;
-    if (currentIsLeader) {
-      if (checkLeader) {
-        // set leader
-        isLeader.set(false);
-
-        const pwObj = await getPass(roomRef);
-        // set local password as normal
-        recordRoomLocalStorage(id, {
-          password: pwObj.passCode,
-          id: id,
-        });
-        return;
-      }
-
-      // set leader
-      isLeader.set(false);
-    } else {
-      if (!checkLeader) {
-        boxedType = "pass";
-        boxedInfo = "Password is incorrect";
-        boxed = true;
-        return;
-      }
-
-      isLeader.set(true);
-    }
-  };
-
-  const switchTryLeader = async (password: string) => {
-    // roomref
-    const roomRef = doc(db, "room", id);
-    // check password for leader
-    const [checkLeader] = await checkPass(roomRef, password);
-    if (!checkLeader) {
-      boxedInfo = "Password is incorrect";
-      return;
-    }
-
-    // set leader
-    isLeader.set(true);
-
-    // set local password as leader password
-    recordRoomLocalStorage(id, {
-      password: password,
-      id: id,
-    });
-    boxedReset();
-  };
-
-  const submitForm = (
-    e: SubmitEvent & { currentTarget: EventTarget & HTMLFormElement }
-  ) => {
-    boxedInfo = "";
-    const form = e.currentTarget;
-    const passCode = form.elements.namedItem("passCode") as HTMLInputElement;
-    const pw = passCode.value;
-
-    switchTryLeader(pw);
-  };
-
   const currentValues: { [key: string]: string } = {
     roomName: "",
     nick: "",
@@ -119,16 +44,10 @@
     currentValues.roomName = info.name;
     currentValues.nick = nick;
 
-    if ($isLeader) {
-      // roomref
-      const roomRef = doc(db, "room", id);
-      const pwObj = await getPass(roomRef);
-      currentValues.passCode = pwObj.passCode;
-      currentValues.leaderCode = pwObj.leaderCode;
-    } else {
-      currentValues.passCode = "";
-      currentValues.leaderCode = "";
-    }
+    // roomref
+    const roomRef = doc(db, "room", id);
+    const pwObj = await getPass(roomRef);
+    currentValues.passCode = pwObj.passCode;
   };
 
   const editSettings = async () => {
@@ -137,10 +56,7 @@
     const formData = new FormData(form);
     const formValues = {};
 
-    const keys = ["roomName", "nick"];
-    if (isLeader) {
-      keys.push("passCode", "leaderCode");
-    }
+    const keys = ["roomName", "nick", "passCode"];
 
     for (const key of keys) {
       formValues[key] = formData.get(key) as string;
@@ -151,14 +67,6 @@
     for (const [key, value] of Object.entries(formValues)) {
       if (currentValues[key] !== value) {
         changes[key] = value;
-      }
-    }
-
-    // disable passcode and leader code if not leader
-    if (!isLeader) {
-      if ("passCode" in changes || "leaderCode" in changes) {
-        error = "leader can change passwords";
-        return;
       }
     }
 
@@ -179,12 +87,6 @@
               passCode: value as string,
             };
             break;
-          case "leaderCode":
-            mapChanges.password = {
-              ...mapChanges.password,
-              leaderCode: value as string,
-            };
-            break;
           default:
             break;
         }
@@ -200,12 +102,9 @@
     }
   };
 
-  const getLink = async (leader = false) => {
+  const getLink = async () => {
     const p = await getPass(doc(db, "room", id));
-    let password = p?.passCode;
-    if (leader) {
-      password = p?.leaderCode;
-    }
+    const password = p?.passCode;
 
     let url = `${window.location.origin}/#/room/${id}`;
     if (password) {
@@ -222,11 +121,9 @@
 
 <div class={`${className}`}>
   <div class="flex justify-between w-full border-b border-black">
-    <button
-      class="h-7 flex-1 px-2 text-left hover:bg-nl hover:text-white"
-      on:click={switchMode}
-      >{$isLeader ? "Leader - switch" : "User - switch"}</button
-    >
+    <div>
+      <span class="px-2 h-7">{nick}</span>
+    </div>
     <div>
       <button
         on:click={() => {
@@ -240,89 +137,44 @@
       >
       <button
         on:click={async () => {
-          boxedLink = await getLink(false);
-          boxedInfo = "Selected Invite link";
+          if (boxedInfo == "Invite Link") {
+            boxedReset();
+            return;
+          }
+
+          boxedLink = await getLink();
+          boxedInfo = "Invite Link";
           boxedType = "link";
           boxedQR = await generateQR(boxedLink);
           boxed = true;
+
+          console.log(boxedInfo);
         }}
         class="float-right border-l border-black hover:bg-nl hover:text-white px-2 h-7"
-        >Invite Link</button
+        >{boxedInfo == "Invite Link"
+          ? "Close Invite Link"
+          : "Invite Link"}</button
       >
-      {#if $isLeader}
-        <button
-          on:click={async () => {
-            boxedLink = await getLink(true);
-            boxedInfo = "Selected Leader link";
-            boxedType = "link";
-            boxedQR = await generateQR(boxedLink);
-            boxed = true;
-          }}
-          class="float-right border-l border-black hover:bg-nl hover:text-white px-2 h-7"
-          >Leader Link</button
-        >
-      {/if}
     </div>
   </div>
 
   {#if boxed}
     <div class="block border-b border-black bg-yellow-200 relative">
-      {#if boxedType == "pass"}
-        <button
-          on:click={boxedReset}
-          class="px-2 h-7 bg-gray-100 border-b border-l border-black hover:bg-red-500 hover:text-white absolute top-0 right-0"
-        >
-          X
-        </button>
-        <form on:submit|preventDefault|stopPropagation={submitForm} class="p-2">
-          <label>
-            <span class="text-sm font-bold block mb-2">Passcode for leader</span
-            >
-            <input
-              type="text"
-              name="passCode"
-              autocomplete="off"
-              placeholder="Password to join room"
-              class="mb-4 form-input"
-            />
-          </label>
-          <div class="flex gap-2 justify-between">
-            <button
-              type="submit"
-              value="create"
-              class="block border border-black bg-white text-black hover:bg-nl hover:text-white font-bold py-1 px-2"
-            >
-              Try Switch Leader
-            </button>
-            <span class="flex-1 bg-red-500 text-white block px-2 leading-loose"
-              >{boxedInfo}</span
-            >
-          </div>
-        </form>
-      {:else if boxedType == "link"}
-        <div class="flex flex-row flex-wrap">
+      {#if boxedType == "link"}
+        <div class="flex flex-row flex-wrap-reverse justify-center">
           <img alt="qrcode" src={boxedQR} />
           <div class="flex flex-1 border-l border-black flex-col">
-            <div class="bg-gray-100 border-b border-black w-full">
-              <span class="inline-block px-2 leading-7">{boxedInfo}</span>
-              <button
-                on:click={boxedReset}
-                class="px-2 h-7 float-right border-l border-black hover:bg-red-500 hover:text-white"
-              >
-                X
-              </button>
-            </div>
-            <div class="flex items-center flex-1">
-              <div class="flex-1 border-black border-t border-b flex">
+            <div class="flex items-center flex-1 min-w-[20rem]">
+              <div class="flex-1 border-black border-t border-b flex flex-col">
                 <input
-                  class="bg-white w-full h-7 text-ellipsis inline-block flex-1 px-2"
+                  class="bg-white w-full text-ellipsis inline-block flex-1 px-2"
                   type="text"
                   readonly
                   title={boxedLink}
                   value={boxedLink}
                 />
                 <button
-                  class="float-right border-l border-black bg-gray-100 hover:text-white hover:bg-nl px-2 h-7"
+                  class="float-right border-t border-black bg-gray-50 hover:text-white hover:bg-nl px-2 h-7"
                   on:click={() => {
                     copyInviteLink(boxedLink);
                   }}>Copy</button
@@ -371,31 +223,18 @@
             on:click={() => (formNick.value = generateName())}>Generate</button
           >
         </label>
-        {#if $isLeader}
-          <hr class="block py-2 px-2" />
-          <label class="inline-block w-full">
-            <span class="text-sm font-bold mb-2">Passcode</span>
-            <input
-              type="text"
-              name="passCode"
-              autocomplete="off"
-              value={currentValues.passCode}
-              placeholder="Optional passcode to join room"
-              class="mb-4 form-input"
-            />
-          </label>
-          <label class="inline-block w-full">
-            <span class="text-sm font-bold mb-2">Leader Passcode</span>
-            <input
-              type="text"
-              name="leaderCode"
-              autocomplete="off"
-              value={currentValues.leaderCode}
-              placeholder="Optional passcode to be leader"
-              class="mb-4 form-input"
-            />
-          </label>
-        {/if}
+        <hr class="block py-1 px-2" />
+        <label class="inline-block w-full">
+          <span class="text-sm font-bold mb-2">Passcode</span>
+          <input
+            type="text"
+            name="passCode"
+            autocomplete="off"
+            value={currentValues.passCode}
+            placeholder="Optional passcode to join room"
+            class="mb-4 form-input"
+          />
+        </label>
         <div class="flex gap-2 justify-between">
           <button
             type="submit"
@@ -413,7 +252,6 @@
       </form>
     {:else}
       <h2 class="font-semibold leading-tight text-3xl">{info?.name}</h2>
-      <span>{nick}</span>
     {/if}
   </div>
 </div>

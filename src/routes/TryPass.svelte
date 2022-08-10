@@ -16,7 +16,6 @@
 
   let allow = false;
   let mounted = false;
-  let isLeader = false;
 
   const queryCheck = (qString: string, noCheck = false) => {
     if (!noCheck && !mounted) return;
@@ -52,35 +51,23 @@
     // get current password
     const pwLocal = getRoomPasswordLocalStorage(paramID);
     // check password
-    let [checkLeader, checkPassword] = await checkPass(roomRef, pwLocal);
+    let reachable = await checkPass(roomRef, pwLocal);
     let usedPassword = pwLocal;
 
-    if (!checkPassword) {
-      [checkLeader, checkPassword] = await checkPass(roomRef, pw);
+    if (!reachable) {
+      reachable = await checkPass(roomRef, pw);
       usedPassword = pw;
-    } else if (!checkLeader) {
-      const preCheckPassword = checkPassword;
-      // check password
-      [checkLeader, checkPassword] = await checkPass(roomRef, pw);
-      if (checkPassword) {
-        usedPassword = pw;
-      } else {
-        checkPassword = preCheckPassword;
-      }
     }
 
-    if (!checkPassword) {
+    if (!reachable) {
       error = true;
       return;
     }
-
-    isLeader = checkLeader;
 
     // record password
     password = usedPassword;
 
     allow = true;
-    return allow;
   };
 
   $: tryPassCode(params.id, password);
@@ -97,7 +84,7 @@
 
   onMount(async () => {
     const pw = queryCheck($querystring, true);
-    allow = await tryPassCode(params.id, pw, true);
+    await tryPassCode(params.id, pw, true);
 
     mounted = true;
   });
@@ -140,6 +127,6 @@
       </div>
     </div>
   {:else}
-    <Room id={params.id} checkLeader={isLeader} {password} />
+    <Room id={params.id} {password} />
   {/if}
 {/if}

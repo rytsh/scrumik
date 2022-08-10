@@ -9,5 +9,4 @@ export const setRoomList = () => {
   roomList.set(roomLocal);
 };
 
-export const isLeader = writable(false);
 export const show = writable(false);

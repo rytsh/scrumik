@@ -17,11 +17,10 @@
     setIDName,
   } from "@/lib/helper/local";
   import { generateName } from "@/lib/helper/name";
-  import { isLeader, show } from "@/lib/store/store";
+  import { show } from "@/lib/store/store";
 
   export let id = "";
   export let password = "";
-  export let checkLeader = false;
 
   let info: Info = null;
 
@@ -32,9 +31,6 @@
   let unsub: Unsubscribe = null;
   onMount(async () => {
     const roomRef = doc(db, "room", id);
-    // set leader
-    isLeader.set(checkLeader);
-
     // record room in local storage
     let roomName = getRoomNameLocalStorage(id);
 
@@ -42,7 +38,7 @@
     await setDoc(
       roomRef,
       {
-        people: { [nickID]: { nick: nick, points: "", isLeader: checkLeader } },
+        people: { [nickID]: { nick: nick, points: "" } },
       },
       { merge: true }
     );
@@ -60,7 +56,8 @@
 
       // check kicked
       if (!people[nickID]) {
-        push("/?msg=You%20have%20been%20kicked!!&kickRoom=");
+        // push(`/?msg=You%20have%20been%20kicked!!&kickRoom=${id}`);
+        push("/?msg=You%20have%20been%20kicked!!");
 
         return;
       }
@@ -80,12 +77,7 @@
         localChanges.name = roomName;
       }
 
-      if ($isLeader && passwordObj.leaderCode != password) {
-        password = passwordObj.leaderCode;
-        localChanges.password = password;
-      }
-
-      if (!$isLeader && passwordObj.passCode != password) {
+      if (passwordObj.passCode != password) {
         password = passwordObj.passCode;
         localChanges.password = password;
       }
