@@ -2,9 +2,9 @@
   import { onDestroy, onMount } from "svelte";
   import { link } from "svelte-spa-router";
 
-  import { removeRoomLocalStorage } from "../helper/local";
-  import { confirm } from "../helper/ask";
-  import { roomList, setRoomList } from "../store/store";
+  import { removeRoomLocalStorage } from "@/lib/helper/local";
+  import { confirm } from "@/lib/helper/ask";
+  import { roomList, setRoomList } from "@/lib/store/store";
 
   let className = "";
   export { className as class };

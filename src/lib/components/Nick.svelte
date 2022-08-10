@@ -1,9 +1,9 @@
 <script lang="ts">
   import { onDestroy, onMount } from "svelte";
 
-  import { changeIDName, getIDName, setIDName } from "../helper/local";
-  import { generateName } from "../helper/name";
-  import Icon from "./Icon.svelte";
+  import { changeIDName, getIDName, setIDName } from "@/lib/helper/local";
+  import { generateName } from "@/lib/helper/name";
+  import Icon from "@/lib/components/Icon.svelte";
 
   let editMode = false;
 

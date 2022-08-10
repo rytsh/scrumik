@@ -7,11 +7,11 @@
     setDoc,
     updateDoc,
   } from "firebase/firestore";
-  import { db } from "../helper/fire";
-  import Card from "./Card.svelte";
-  import type { CardV } from "../helper/models";
-  import { stringSort } from "../helper/sort";
-  import { getCardId } from "../helper/id";
+  import { db } from "@/lib/helper/fire";
+  import Card from "@/lib/components/Card.svelte";
+  import type { CardV } from "@/lib/helper/models";
+  import { stringSort } from "@/lib/helper/sort";
+  import { getCardId } from "@/lib/helper/id";
   import { show } from "@/lib/store/store";
 
   export let cardDeck: CardV[] = [];

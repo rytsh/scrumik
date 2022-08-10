@@ -1,6 +1,6 @@
 <script lang="ts">
   import { createEventDispatcher } from "svelte";
-  import type { CardV } from "../helper/models";
+  import type { CardV } from "@/lib/helper/models";
 
   export let text = "";
   export let emoji = false;

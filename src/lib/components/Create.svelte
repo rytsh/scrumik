@@ -1,8 +1,8 @@
 <script lang="ts">
   import { push } from "svelte-spa-router";
-  import { db } from "../helper/fire";
-  import { defaultCards, type RoomSpec } from "../helper/models";
-  import { createRoom } from "../helper/room";
+  import { db } from "@/lib/helper/fire";
+  import { defaultCards, type RoomSpec } from "@/lib/helper/models";
+  import { createRoom } from "@/lib/helper/room";
 
   let className = "";
   export { className as class };

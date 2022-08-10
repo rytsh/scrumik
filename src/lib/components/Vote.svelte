@@ -1,11 +1,11 @@
 <script lang="ts">
   import { doc, setDoc, updateDoc } from "firebase/firestore";
-  import { db } from "../helper/fire";
+  import { db } from "@/lib/helper/fire";
   import round from "lodash/round";
 
-  import type { People } from "../helper/models";
-  import { stringSort } from "../helper/sort";
-  import { show } from "../store/store";
+  import type { People } from "@/lib/helper/models";
+  import { stringSort } from "@/lib/helper/sort";
+  import { show } from "@/lib/store/store";
 
   let className = "";
   export { className as class };

@@ -1,11 +1,13 @@
 <script lang="ts">
   import { doc, setDoc } from "firebase/firestore";
-  import { db } from "../helper/fire";
+  import { onDestroy, onMount } from "svelte";
+  import { db } from "@/lib/helper/fire";
 
-  import type { Info, RoomSpec } from "../helper/models";
-  import { generateName } from "../helper/name";
-  import { getPass } from "../helper/pass";
-  import { generateQR } from "../helper/qr";
+  import type { Info, RoomSpec } from "@/lib/helper/models";
+  import { generateName } from "@/lib/helper/name";
+  import { getPass } from "@/lib/helper/pass";
+  import { generateQR } from "@/lib/helper/qr";
+  import { deleteTrigger, recordTrigger } from "@/lib/helper/trigger";
 
   let className = "";
   export { className as class };
@@ -24,6 +26,8 @@
   let boxedLink = "";
   let boxedInfo = "";
   let boxedQR = "";
+
+  let copied = false;
 
   const boxedReset = () => {
     boxed = false;
@@ -115,8 +119,33 @@
   };
 
   const copyInviteLink = (url: string) => {
-    navigator.clipboard.writeText(url);
+    navigator.clipboard.writeText(url).then(
+      () => {
+        // clipboard successfully set
+        copied = true;
+        setTimeout(() => (copied = false), 500);
+      },
+      () => {
+        // clipboard write failed
+        console.error("clipboard write failed");
+      }
+    );
   };
+
+  const refreshQR = async () => {
+    if (boxedInfo == "Invite Link") {
+      boxedLink = await getLink();
+      boxedQR = await generateQR(boxedLink);
+    }
+  };
+
+  onMount(() => {
+    recordTrigger("password", "settings", refreshQR);
+  });
+
+  onDestroy(() => {
+    deleteTrigger("password", "settings");
+  });
 </script>
 
 <div class={`${className}`}>
@@ -147,8 +176,6 @@
           boxedType = "link";
           boxedQR = await generateQR(boxedLink);
           boxed = true;
-
-          console.log(boxedInfo);
         }}
         class="float-right border-l border-black hover:bg-nl hover:text-white px-2 h-7"
         >{boxedInfo == "Invite Link"
@@ -174,11 +201,15 @@
                   value={boxedLink}
                 />
                 <button
-                  class="float-right border-t border-black bg-gray-50 hover:text-white hover:bg-nl px-2 h-7"
+                  class={`${
+                    copied ? "hover:bg-green-500" : "hover:bg-nl"
+                  } float-right border-t border-black bg-gray-50 hover:text-white px-2 h-7`}
                   on:click={() => {
                     copyInviteLink(boxedLink);
-                  }}>Copy</button
+                  }}
                 >
+                  {copied ? "Copied" : "Copy"}
+                </button>
               </div>
             </div>
           </div>
@@ -220,8 +251,10 @@
           <button
             type="button"
             class="underline hover:bg-nl hover:text-white"
-            on:click={() => (formNick.value = generateName())}>Generate</button
+            on:click={() => (formNick.value = generateName())}
           >
+            Generate
+          </button>
         </label>
         <hr class="block py-1 px-2" />
         <label class="inline-block w-full">

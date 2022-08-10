@@ -4,7 +4,7 @@
   import { db } from "@/lib/helper/fire";
 
   import { checkPass } from "@/lib/helper/pass";
-  import Room from "./Room.svelte";
+  import Room from "@/routes/Room.svelte";
   import { onMount } from "svelte";
   import { getRoomPasswordLocalStorage } from "@/lib/helper/local";
 
@@ -24,8 +24,6 @@
     if (qString == "") {
       return;
     }
-
-    console.log("called", qString);
 
     const searchParams = new URLSearchParams(qString);
     password = searchParams.get("password") ?? "";

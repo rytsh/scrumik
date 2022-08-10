@@ -1,7 +1,7 @@
 <script lang="ts">
   import { push } from "svelte-spa-router";
-  import { db } from "../helper/fire";
-  import { isReachableRoom } from "../helper/room";
+  import { db } from "@/lib/helper/fire";
+  import { isReachableRoom } from "@/lib/helper/room";
 
   let className = "";
   export { className as class };

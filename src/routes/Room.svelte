@@ -18,6 +18,7 @@
   } from "@/lib/helper/local";
   import { generateName } from "@/lib/helper/name";
   import { show } from "@/lib/store/store";
+  import { triggerFunction } from "@/lib/helper/trigger";
 
   export let id = "";
   export let password = "";
@@ -80,6 +81,7 @@
       if (passwordObj.passCode != password) {
         password = passwordObj.passCode;
         localChanges.password = password;
+        triggerFunction("password");
       }
 
       if (Object.keys(localChanges).length) {
