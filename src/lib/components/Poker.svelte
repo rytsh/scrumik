@@ -174,13 +174,22 @@
               />
             </label>
             <label class="flex mb-4">
-              <span class="text-sm font-bold block pr-4">Icon</span>
+              <span class="text-sm font-bold block pr-4"
+                >Use Noto-Emoji Font</span
+              >
               <input
                 type="checkbox"
                 name="icon"
                 bind:checked={newCardValues.emoji}
               />
             </label>
+            <a
+              href="https://glyphs.devusage.com/#/fonts/Noto%20Emoji"
+              target="_blank"
+              class="block mb-2 border-b border-t border-gray-600 hover:bg-yellow-200"
+            >
+              Show Noto Emojies
+            </a>
             <button
               type="submit"
               value="create"
