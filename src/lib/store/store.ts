@@ -10,3 +10,4 @@ export const setRoomList = () => {
 };
 
 export const show = writable(false);
+export const keysView = writable(false);

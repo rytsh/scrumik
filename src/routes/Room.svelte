@@ -19,6 +19,7 @@
   import { generateName } from "@/lib/helper/name";
   import { show } from "@/lib/store/store";
   import { triggerFunction } from "@/lib/helper/trigger";
+  import { keyDownListener, keyUpListener } from "@/lib/helper/keys";
 
   export let id = "";
   export let password = "";
@@ -31,6 +32,9 @@
 
   let unsub: Unsubscribe = null;
   onMount(async () => {
+    window.addEventListener("keydown", keyDownListener);
+    window.addEventListener("keyup", keyUpListener);
+
     const roomRef = doc(db, "room", id);
     // record room in local storage
     let roomName = getRoomNameLocalStorage(id);
@@ -100,6 +104,9 @@
   });
 
   onDestroy(() => {
+    window.removeEventListener("keydown", keyDownListener);
+    window.removeEventListener("keyup", keyUpListener);
+
     if (unsub != null) {
       unsub();
     }

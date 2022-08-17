@@ -13,6 +13,8 @@
   import { stringSort } from "@/lib/helper/sort";
   import { getCardId } from "@/lib/helper/id";
   import { show } from "@/lib/store/store";
+  import { onDestroy, onMount } from "svelte";
+  import { addKeyMap, deleteKeyMap } from "@/lib/helper/keys";
 
   export let cardDeck: CardV[] = [];
 
@@ -31,6 +33,8 @@
 
   let newCardValues = { ...newCardValuesOrginal };
   let modifiedCardDeck: CardV[];
+
+  let cardHeight: number;
 
   const selectCard = (event: CustomEvent | { detail: string }) => {
     if ($show) {
@@ -104,6 +108,14 @@
     delete addList[id];
     addList = { ...addList };
   };
+
+  onMount(() => {
+    addKeyMap("Backspace", () => selectCard({ detail: "" }));
+  });
+
+  onDestroy(() => {
+    deleteKeyMap("Backspace");
+  });
 </script>
 
 <div class={`${className} relative`}>
@@ -148,11 +160,12 @@
 
   <div class="relative">
     <div
-      class="p-6 absolute bg-gray-300 bg-opacity-90 w-full h-full z-10"
+      class="p-6 relative bg-gray-300 bg-opacity-90 w-full h-full z-10"
       class:hidden={!newCardScreen}
     >
       <div
         class="p-2 h-full border border-black bg-white flex justify-around gap-2 items-center"
+        style={`min-height: ${cardHeight}px;`}
       >
         <Card
           class="bg-white"
@@ -212,7 +225,12 @@
       </div>
     </div>
 
-    <div class="p-2">
+    <div
+      class={`${
+        newCardScreen ? "absolute top-0 left-0" : "relative"
+      } p-2 w-full`}
+      bind:offsetHeight={cardHeight}
+    >
       {#if editMode}
         <div class="grid justify-between auto-fill-col gap-2">
           {#each modifiedCardDeck as card (getCardId(card))}
@@ -259,8 +277,13 @@
         </div>
       {:else}
         <div class="grid justify-between auto-fill-col gap-2">
-          {#each cardDeck.sort( (a, b) => stringSort(a.text, b.text) ) as cardV (cardV.text)}
-            <Card on:click={selectCard} text={cardV.text} emoji={cardV.emoji} />
+          {#each cardDeck.sort( (a, b) => stringSort(a.text, b.text) ) as cardV, i (cardV.text)}
+            <Card
+              on:click={selectCard}
+              text={cardV.text}
+              emoji={cardV.emoji}
+              index={i}
+            />
           {/each}
         </div>
       {/if}
