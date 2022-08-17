@@ -160,12 +160,12 @@
 
   <div class="relative">
     <div
-      class="p-6 relative bg-gray-300 bg-opacity-90 w-full h-full z-10"
+      class="p-6 relative bg-gray-300 bg-opacity-90 w-full h-full z-10 min-h-[15rem]"
       class:hidden={!newCardScreen}
+      style={`height: ${cardHeight}px;`}
     >
       <div
         class="p-2 h-full border border-black bg-white flex justify-around gap-2 items-center"
-        style={`min-height: ${cardHeight}px;`}
       >
         <Card
           class="bg-white"
@@ -229,7 +229,7 @@
       class={`${
         newCardScreen ? "absolute top-0 left-0" : "relative"
       } p-2 w-full`}
-      bind:offsetHeight={cardHeight}
+      bind:clientHeight={cardHeight}
     >
       {#if editMode}
         <div class="grid justify-between auto-fill-col gap-2">
@@ -277,7 +277,7 @@
         </div>
       {:else}
         <div class="grid justify-between auto-fill-col gap-2">
-          {#each cardDeck.sort( (a, b) => stringSort(a.text, b.text) ) as cardV, i (cardV.text)}
+          {#each cardDeck.sort( (a, b) => stringSort(a.text, b.text) ) as cardV, i (getCardId(cardV))}
             <Card
               on:click={selectCard}
               text={cardV.text}
