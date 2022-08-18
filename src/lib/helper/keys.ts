@@ -40,12 +40,12 @@ const keyDownListener = (event: KeyboardEvent) => {
     return; // Do nothing if the event was already processed
   }
 
-  switch (event.key) {
-    case "Shift":
+  switch (event.key.toUpperCase()) {
+    case "SHIFT":
       keysView.set(true);
       break;
-    case getKey(event.key):
-      keyMap[event.key][0]();
+    case getKey(event.key.toUpperCase()):
+      keyMap[event.key.toUpperCase()][0]();
       break;
     default:
       return; // Quit when this doesn't handle the key event.
