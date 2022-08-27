@@ -45,14 +45,11 @@ const keyDownListener = (event: KeyboardEvent) => {
       keysView.set(true);
       break;
     case getKey(event.key.toUpperCase()):
-      keyMap[event.key.toUpperCase()][0]();
+      if (event.shiftKey) keyMap[event.key.toUpperCase()][0]();
       break;
     default:
       return; // Quit when this doesn't handle the key event.
   }
-
-  // Cancel the default action to avoid it being handled twice
-  event.preventDefault();
 };
 
 const keyUpListener = (event: KeyboardEvent) => {
@@ -60,16 +57,13 @@ const keyUpListener = (event: KeyboardEvent) => {
     return; // Do nothing if the event was already processed
   }
 
-  switch (event.key) {
-    case "Shift":
+  switch (event.key.toUpperCase()) {
+    case "SHIFT":
       keysView.set(false);
       break;
     default:
       return; // Quit when this doesn't handle the key event.
   }
-
-  // Cancel the default action to avoid it being handled twice
-  event.preventDefault();
 };
 
 export { keyDownListener, keyUpListener, addKeyMap, deleteKeyMap };

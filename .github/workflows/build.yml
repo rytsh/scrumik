@@ -1,0 +1,29 @@
+name: build-deploy
+on:
+  push:
+    tags:
+      - v[0-9]*
+jobs:
+  frontend:
+    runs-on: ubuntu-latest
+    container:
+      # image should support the canvas package
+      image: rytsh/frontend-pnpm:v0.0.4
+    steps:
+      - uses: actions/checkout@v2
+      - name: Cache node modules
+        uses: actions/cache@v2
+        with:
+          path: ~/.pnpm-store
+          key: pnpm-deps
+          restore-keys: pnpm-deps
+      - name: install deps and build
+        run: |
+          echo VITE_VERSION=${{github.ref_name}} > .env
+          pnpm install --prefer-offline
+          pnpm build
+      - uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
+          cname: scrumik.devusage.com

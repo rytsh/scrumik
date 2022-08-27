@@ -1,5 +1,6 @@
 <script lang="ts">
   import { link } from "svelte-spa-router";
+  const version = import.meta.env.VITE_VERSION;
 
   export let title = "scrumik";
   export let message = "scrum poker tool";
@@ -21,6 +22,9 @@
   </span>
 
   <div class="flex-grow text-right">
+    <span>
+      {version}
+    </span>
     <a
       href="https://github.com/rytsh/scrumik"
       target="_blank"

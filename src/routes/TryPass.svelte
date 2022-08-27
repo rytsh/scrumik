@@ -12,6 +12,7 @@
     id: string;
   };
   let password = "";
+  let popComponent = "";
   let error = false;
 
   let allow = false;
@@ -22,17 +23,28 @@
 
     qString = qString.replace(" ", "");
     if (qString == "") {
+      popComponent = "";
       return;
     }
 
     const searchParams = new URLSearchParams(qString);
     password = searchParams.get("password") ?? "";
+    popComponent = searchParams.get("pop") ?? "";
+
+    // remove password in hash location
+    searchParams.delete("password");
+    let newParams = searchParams.toString();
+
+    if (newParams != "") {
+      newParams = "?" + newParams;
+    }
 
     // remove query in URL
     window.history.replaceState(
       {},
       "",
-      window.location.pathname + window.location.hash.replace("?" + qString, "")
+      window.location.pathname +
+        window.location.hash.replace("?" + qString, newParams)
     );
 
     return password;
@@ -125,6 +137,6 @@
       </div>
     </div>
   {:else}
-    <Room id={params.id} {password} />
+    <Room id={params.id} {password} {popComponent} />
   {/if}
 {/if}

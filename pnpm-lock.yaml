@@ -18,6 +18,7 @@ specifiers:
   gh-pages: ^4.0.0
   lodash: ^4.17.21
   postcss: ^8.4.14
+  postcss-hover-media-feature: ^1.0.2
   postcss-load-config: ^4.0.1
   sass: ^1.53.0
   stylelint: ^14.9.1
@@ -58,6 +59,7 @@ devDependencies:
   eslint-plugin-svelte3: 4.0.0_m4jpobot6gi3xtcba7bv5cflma
   gh-pages: 4.0.0
   postcss: 8.4.14
+  postcss-hover-media-feature: 1.0.2_postcss@8.4.14
   postcss-load-config: 4.0.1_postcss@8.4.14
   sass: 1.53.0
   stylelint: 14.9.1
@@ -3055,6 +3057,16 @@ packages:
       find-up: 4.1.0
     dev: true
 
+  /postcss-hover-media-feature/1.0.2_postcss@8.4.14:
+    resolution: {integrity: sha512-o5xDUqCQ4xtilWOcvo5LKYxFVSLWcBN0IlTqa0IJwAwHTd4pxKmX4c0fGIpgLQCcBB/+aFizt2NVWNGJWG4Izg==}
+    engines: {node: '>=10.0.0'}
+    peerDependencies:
+      postcss: ^8.0.0
+    dependencies:
+      postcss: 8.4.14
+      postcss-selector-parser: 6.0.10
+    dev: true
+
   /postcss-import/14.1.0_postcss@8.4.14:
     resolution: {integrity: sha512-flwI+Vgm4SElObFVPpTIT7SU7R3qk2L7PyduMcokiaVKuWv9d/U+Gm/QAd8NDLuykTWTkcrjOeD2Pp1rMeBTGw==}
     engines: {node: '>=10.0.0'}
@@ -3996,7 +4008,7 @@ packages:
     dev: true
 
   /util-deprecate/1.0.2:
-    resolution: {integrity: sha1-RQ1Nyfpw3nMnYvvS1KKJgUGaDM8=}
+    resolution: {integrity: sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==}
 
   /uuid/8.3.2:
     resolution: {integrity: sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg==}

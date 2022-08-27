@@ -26,6 +26,7 @@
     "eslint-plugin-svelte3": "^4.0.0",
     "gh-pages": "^4.0.0",
     "postcss": "^8.4.14",
+    "postcss-hover-media-feature": "^1.0.2",
     "postcss-load-config": "^4.0.1",
     "sass": "^1.53.0",
     "stylelint": "^14.9.1",

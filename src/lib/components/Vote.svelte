@@ -6,12 +6,14 @@
   import type { People } from "@/lib/helper/models";
   import { stringSort } from "@/lib/helper/sort";
   import { show } from "@/lib/store/store";
+  import Icon from "./Icon.svelte";
 
   let className = "";
   export { className as class };
 
   export let id = "";
   export let description = "";
+  export let pop = false;
   export let people: People = null;
 
   let editMode = false;
@@ -114,6 +116,17 @@
       />
     {/if}
     <div>
+      <a
+        href={`#/room/${id}${pop ? "" : "?pop=vote"}`}
+        title="pop-up votes"
+        class="float-right px-2 h-7 border-l border-black self-end hover:text-white hover:bg-nl"
+      >
+        {#if pop}
+          <Icon icon="shrink" class="pointer-events-none" />
+        {:else}
+          <Icon icon="pop" class="pointer-events-none" />
+        {/if}
+      </a>
       {#if editMode}
         <button
           class="px-2 h-7 border-l border-black self-end hover:bg-green-500 hover:text-white"

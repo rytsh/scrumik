@@ -23,6 +23,7 @@
 
   export let id = "";
   export let password = "";
+  export let popComponent = "";
 
   let info: Info = null;
 
@@ -113,26 +114,36 @@
   });
 </script>
 
-<div class="flex flex-col xl:flex-row gap-2">
+{#if popComponent == "vote"}
   <Vote
     {id}
     description={info?.description ?? ""}
     {people}
+    pop={true}
     class="flex-1 bg-white border-black border-t border-b sm:border"
   />
-  <div class="flex flex-1 flex-col gap-2">
-    <Settings
+{:else}
+  <div class="flex flex-col xl:flex-row gap-2">
+    <Vote
       {id}
-      {info}
-      {nick}
-      {nickID}
-      class="bg-white border-black border-t border-b sm:border h-fit"
+      description={info?.description ?? ""}
+      {people}
+      class="flex-1 bg-white border-black border-t border-b sm:border"
     />
-    <Poker
-      {id}
-      {nickID}
-      cardDeck={cards}
-      class="flex-1 bg-white border-black border-t border-b sm:border h-fit"
-    />
+    <div class="flex flex-1 flex-col gap-2">
+      <Settings
+        {id}
+        {info}
+        {nick}
+        {nickID}
+        class="bg-white border-black border-t border-b sm:border h-fit"
+      />
+      <Poker
+        {id}
+        {nickID}
+        cardDeck={cards}
+        class="flex-1 bg-white border-black border-t border-b sm:border h-fit"
+      />
+    </div>
   </div>
-</div>
+{/if}
