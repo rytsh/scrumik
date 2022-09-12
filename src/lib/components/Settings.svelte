@@ -151,7 +151,7 @@
 <div class={`${className}`}>
   <div class="flex justify-between w-full border-b border-black">
     <div>
-      <span class="px-2 h-7">{nick}</span>
+      <span class="px-2 h-7 leading-7">{nick}</span>
     </div>
     <div>
       <button

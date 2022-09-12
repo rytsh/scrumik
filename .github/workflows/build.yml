@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     container:
       # image should support the canvas package
-      image: rytsh/frontend-pnpm:v0.0.4
+      image: rytsh/frontend-node:v0.1.0
     steps:
       - uses: actions/checkout@v2
       - name: Cache node modules

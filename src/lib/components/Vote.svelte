@@ -12,6 +12,7 @@
   export { className as class };
 
   export let id = "";
+  export let selfId = "";
   export let description = "";
   export let pop = false;
   export let people: People = null;
@@ -106,7 +107,9 @@
   >
     <span class="px-2">
       Voting -
-      <i>{editMode ? "" : description ? description : "Topic Name"}</i>
+      <i class="leading-7"
+        >{editMode ? "" : description ? description : "Topic Name"}</i
+      >
     </span>
     {#if editMode}
       <input
@@ -179,11 +182,15 @@
       <table class="w-full">
         {#each Object.keys(people).sort( (a, b) => stringSort(people[a].nick, people[b].nick) ) as nickID (nickID)}
           <tr
-            class={`odd:bg-gray-100 border-b border-black first:border-t ${
-              people[nickID]?.card?.text ? "" : "!bg-yellow-100"
-            } ${deleteList[nickID] ? "stripe-gray" : ""}`}
+            class={`odd:bg-gray-100 border-b border-black first:border-t
+            ${people[nickID]?.card?.text ? "" : "!bg-yellow-100"}
+            ${deleteList[nickID] ? "stripe-gray" : ""}`}
           >
-            <td class="text-left w-1/2 text-2xl">
+            <td
+              class={`text-left w-1/2 text-2xl ${
+                nickID == selfId ? "underline" : ""
+              }`}
+            >
               {people[nickID]?.nick}
             </td>
             <td

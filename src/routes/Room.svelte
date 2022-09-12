@@ -128,6 +128,7 @@
       {id}
       description={info?.description ?? ""}
       {people}
+      selfId={nickID}
       class="flex-1 bg-white border-black border-t border-b sm:border"
     />
     <div class="flex flex-1 flex-col gap-2">
